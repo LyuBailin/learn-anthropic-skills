@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<base href="/learn-anthropic-skills/">
 <title>第 6 章 · 体系设计：多 Skill 架构、版本管理、与 MCP 协同 · learn-skills</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/[email protected]/styles/github-dark.min.css">
 <style>
@@ -353,7 +354,7 @@ footer a { color: var(--accent-2); text-decoration: none; }
 <div class="layout">
     <aside class="toc">
         <div class="toc-title">本页目录</div>
-        <p style='color: var(--muted); font-size: 0.8rem;'>无章节</p>
+        <ul><li><a href="#61">6.1 为什么需要"体系设计"</a><li><a href="#62">6.2 命名空间与作用域设计</a><ul><li><a href="#621">6.2.1 四级作用域（按优先级）</a><li><a href="#622">6.2.2 命名约定</a><li><a href="#623">6.2.3 命名空间隔离</a></ul></li><li><a href="#63-skill">6.3 多 Skill 协同模式</a><ul><li><a href="#631">6.3.1 串行：链式触发</a><li><a href="#632-skill">6.3.2 并行：多 skill 独立</a><li><a href="#633">6.3.3 分层：基础 + 扩展</a><li><a href="#634">6.3.4 互斥：避免同时触发</a></ul></li><li><a href="#64">6.4 版本管理</a><ul><li><a href="#641">6.4.1 版本化的必要性</a><li><a href="#642-anthropic-skills-api">6.4.2 Anthropic Skills API 的版本管理</a><li><a href="#643">6.4.3 客户端的版本策略</a><li><a href="#644-vs">6.4.4 文件级 vs 包级版本</a></ul></li><li><a href="#65-mcp">6.5 与 MCP 的协同设计</a><ul><li><a href="#651-skill-mcp">6.5.1 Skill 和 MCP 的本质区别</a><li><a href="#652-skill-mcp">6.5.2 Skill 调用 MCP</a><li><a href="#653-mcp-skill">6.5.3 MCP 提供能力，Skill 提供流程</a><li><a href="#654-skill-mcp">6.5.4 何时用 Skill、何时用 MCP</a></ul></li><li><a href="#66-sub-agent">6.6 与 Sub-agent 的协同设计</a><ul><li><a href="#661-skill-sub-agent">6.6.1 Skill 和 Sub-agent 的本质区别</a><li><a href="#662-skill-sub-agentcontext-fork">6.6.2 Skill 调 Sub-agent：context: fork</a><li><a href="#663-skill-sub-agent">6.6.3 何时用 Skill、何时用 Sub-agent</a></ul></li><li><a href="#67">6.7 体系级架构模式</a><ul><li><a href="#671-1">6.7.1 模式 1：基础包 + 领域包</a><li><a href="#672-2">6.7.2 模式 2：基础 + 适配</a><li><a href="#673-3">6.7.3 模式 3：流水线编排</a><li><a href="#674-4">6.7.4 模式 4：插件市场</a></ul></li><li><a href="#68">6.8 监控与可观测性</a><ul><li><a href="#681">6.8.1 关注的核心指标</a><li><a href="#682">6.8.2 调试工具</a><li><a href="#683">6.8.3 错误监控</a><li><a href="#684">6.8.4 定期审查</a></ul></li><li><a href="#69">6.9 安全设计</a><ul><li><a href="#691-skill">6.9.1 Skill 的攻击面</a><li><a href="#692">6.9.2 防御措施</a><li><a href="#693">6.9.3 审计清单</a></ul></li><li><a href="#610-checklist">6.10 体系设计 checklist</a><ul><li><a href="#_1">命名 &amp; 作用域</a><li><a href="#_2">内容组织</a><li><a href="#_3">调用控制</a><li><a href="#_4">协同设计</a><li><a href="#_5">监控 &amp; 安全</a><li><a href="#_6">文档</a></ul></li><li><a href="#611-10">6.11 真实案例：10 人团队怎么设计</a><ul><li><a href="#_7">设计方案</a><li><a href="#_8">关键设计</a><li><a href="#_9">监控</a></ul></li><li><a href="#612">6.12 接下来</a></ul>
     </aside>
     <article>
         <div class="chapter-meta">

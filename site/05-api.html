@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<base href="/learn-anthropic-skills/">
 <title>第 5 章 · API 集成：Messages API + Files API + Code Execution · learn-skills</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/[email protected]/styles/github-dark.min.css">
 <style>
@@ -353,7 +354,7 @@ footer a { color: var(--accent-2); text-decoration: none; }
 <div class="layout">
     <aside class="toc">
         <div class="toc-title">本页目录</div>
-        <p style='color: var(--muted); font-size: 0.8rem;'>无章节</p>
+        <ul><li><a href="#51-api">5.1 API 集成的前提条件</a><li><a href="#52-api">5.2 三个 API 详解</a><ul><li><a href="#521-skills-api">5.2.1 Skills API</a><li><a href="#522-files-api">5.2.2 Files API</a><li><a href="#523-code-execution-tool">5.2.3 Code Execution Tool</a></ul></li><li><a href="#53">5.3 完整的端到端示例</a><li><a href="#54-typescript-nodejs">5.4 TypeScript / Node.js 版本</a><ul><li><a href="#_1">安装</a><li><a href="#_2">完整示例</a></ul></li><li><a href="#55">5.5 流式响应</a><li><a href="#56">5.6 错误处理与重试</a><li><a href="#57">5.7 成本与性能考虑</a><ul><li><a href="#571">5.7.1 成本模型</a><li><a href="#572">5.7.2 模型选择</a><li><a href="#573">5.7.3 性能优化</a></ul></li><li><a href="#58">5.8 常见集成模式</a><ul><li><a href="#1cicd">模式 1：CI/CD 中的代码审查</a><li><a href="#2">模式 2：客服机器人</a><li><a href="#3">模式 3：文档批量处理</a><li><a href="#4">模式 4：内部工具集成</a></ul></li><li><a href="#59-anthropic-skill">5.9 Anthropic 内置 Skill</a><li><a href="#510">5.10 接下来</a></ul>
     </aside>
     <article>
         <div class="chapter-meta">
@@ -606,7 +607,7 @@ footer a { color: var(--accent-2); text-decoration: none; }
 <span class="nb">print</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
 </code></pre></div>
 
-<p>完整可运行版本见 <a href="../examples/api-skill-python/"><code>examples/api-skill-python/</code></a>。</p>
+<p>完整可运行版本见 <a href="examples/api-skill-python/"><code>examples/api-skill-python/</code></a>。</p>
 <hr />
 <h2 id="54-typescript-nodejs">5.4 TypeScript / Node.js 版本</h2>
 <h3 id="_1">安装</h3>

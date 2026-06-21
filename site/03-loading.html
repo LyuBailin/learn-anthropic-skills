@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<base href="/learn-anthropic-skills/">
 <title>第 3 章 · 加载机制：三层披露、token 经济性与触发决策 · learn-skills</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/[email protected]/styles/github-dark.min.css">
 <style>
@@ -353,7 +354,7 @@ footer a { color: var(--accent-2); text-decoration: none; }
 <div class="layout">
     <aside class="toc">
         <div class="toc-title">本页目录</div>
-        <p style='color: var(--muted); font-size: 0.8rem;'>无章节</p>
+        <ul><li><a href="#31">3.1 端到端数据流</a><li><a href="#32-token-100-skill-1">3.2 token 经济性：装 100 个 skill 也只占 1 万词</a><ul><li><a href="#321">3.2.1 数字演算</a><li><a href="#322-system-prompt">3.2.2 对比：把所有内容都放 system prompt</a><li><a href="#323-token">3.2.3 token 节省的最佳实践</a></ul></li><li><a href="#33-claude-skill">3.3 触发决策：Claude 怎么决定加载哪个 skill</a><ul><li><a href="#331">3.3.1 决策流程</a><li><a href="#332-description">3.3.2 description 的好坏直接影响触发</a><li><a href="#333-paths">3.3.3 paths 字段的精确控制</a><li><a href="#334">3.3.4 调用控制组合的精确行为</a><li><a href="#335-skill">3.3.5 多 skill 同时触发的处理</a></ul></li><li><a href="#34">3.4 加载时机：什么时候进入上下文</a><ul><li><a href="#341-l1name-description">3.4.1 L1（name + description）</a><li><a href="#342-l2skillmd">3.4.2 L2（SKILL.md 主体）</a><li><a href="#343-l3">3.4.3 L3（资源文件）</a><li><a href="#344-l3">3.4.4 L3+（脚本执行）</a></ul></li><li><a href="#35">3.5 触发决策的"内部黑盒"</a><li><a href="#36">3.6 上下文窗口的"成长与压缩"</a><li><a href="#37-token">3.7 一个完整的 token 占用示例</a><li><a href="#38">3.8 性能优化：让加载更快</a><ul><li><a href="#381-l1">3.8.1 减少不必要的 L1 加载</a><li><a href="#382-l2">3.8.2 减少 L2 加载</a><li><a href="#383-l3">3.8.3 减少 L3 加载</a><li><a href="#384">3.8.4 用脚本代替文档</a><li><a href="#385-context-fork">3.8.5 用 context: fork 隔离</a></ul></li><li><a href="#39-skill">3.9 监控：怎么知道 skill 工作正不正常</a><ul><li><a href="#391-claude-code">3.9.1 Claude Code 内置命令</a><li><a href="#392">3.9.2 自检清单</a><li><a href="#393">3.9.3 调试触发问题</a></ul></li><li><a href="#310">3.10 接下来</a></ul>
     </aside>
     <article>
         <div class="chapter-meta">

@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<base href="/learn-anthropic-skills/">
 <title>第 4 章 · 实战编写：4 个完整可运行示例 · learn-skills</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/[email protected]/styles/github-dark.min.css">
 <style>
@@ -353,7 +354,7 @@ footer a { color: var(--accent-2); text-decoration: none; }
 <div class="layout">
     <aside class="toc">
         <div class="toc-title">本页目录</div>
-        <p style='color: var(--muted); font-size: 0.8rem;'>无章节</p>
+        <ul><li><a href="#_1">示例目录</a><li><a href="#41-pdf-form-fillerpdf">4.1 · pdf-form-filler（PDF 表单填写）</a><ul><li><a href="#411">4.1.1 目录结构</a><li><a href="#412-skillmd">4.1.2 SKILL.md</a><li><a href="#2">步骤 2：提取表单字段</a><li><a href="#3">步骤 3：询问用户</a><li><a href="#4-pdf">步骤 4：填写 PDF</a><li><a href="#5">步骤 5：验证</a></ul></li><li><a href="#_2">关键决策点</a><li><a href="#_3">错误处理</a><li><a href="#_4">相关资源</a><ul><li><a href="#414-scriptsfill_pdfpy">4.1.4 scripts/fill_pdf.py</a><li><a href="#415-referencesformsmd">4.1.5 references/forms.md</a><li><a href="#416">4.1.6 测试</a></ul></li><li><a href="#42-code-review">4.2 · code-review（代码审查）</a><ul><li><a href="#421">4.2.1 目录结构</a><li><a href="#422-skillmd">4.2.2 SKILL.md</a><li><a href="#step-2">Step 2：分类审查</a><li><a href="#step-3">Step 3：输出</a></ul></li><li><a href="#_5">关键决策点</a><li><a href="#_6">相关资源</a><ul><li><a href="#_7">命令注入</a><li><a href="#_8">路径遍历</a></ul></li><li><a href="#2_1">2. 敏感数据</a><li><a href="#3_1">3. 加密 &amp; 认证</a><li><a href="#4">4. 错误处理</a><li><a href="#5_1">5. 反序列化</a><li><a href="#6-xss">6. XSS</a><li><a href="#7-ssrf">7. SSRF</a><li><a href="#_9">自检清单</a><li><a href="#43-meeting-minutes">4.3 · meeting-minutes（会议纪要）</a><ul><li><a href="#431">4.3.1 目录结构</a><li><a href="#432-skillmd">4.3.2 SKILL.md</a><li><a href="#433-referencesweeklymd">4.3.3 references/weekly.md</a><li><a href="#434-referencesretrospectivemd">4.3.4 references/retrospective.md</a><li><a href="#435-referencesclientmd">4.3.5 references/client.md</a><li><a href="#436-referencesall-handsmd">4.3.6 references/all-hands.md</a><li><a href="#437">4.3.7 测试</a></ul></li><li><a href="#44-api-skill-pythonapi">4.4 · api-skill-python（API 集成）</a><ul><li><a href="#441-python">4.4.1 完整的 Python 集成代码</a><li><a href="#442">4.4.2 流式响应版本</a><li><a href="#443-skill">4.4.3 列出与管理 Skill</a><li><a href="#444">4.4.4 错误处理</a><li><a href="#445">4.4.5 环境配置</a><li><a href="#446">4.4.6 完整运行</a></ul></li><li><a href="#45">4.5 四个示例对比</a><li><a href="#46">4.6 接下来</a></ul>
     </aside>
     <article>
         <div class="chapter-meta">
@@ -362,7 +363,7 @@ footer a { color: var(--accent-2); text-decoration: none; }
         </div>
         <h1 id="4-4">第 4 章 · 实战编写：4 个完整可运行示例</h1>
 <blockquote>
-<p>这一章给你 4 个端到端可用的 skill，覆盖不同场景和复杂度。<strong>所有示例都放在 <a href="../examples/"><code>examples/</code></a> 目录</strong>，可以直接复制使用。</p>
+<p>这一章给你 4 个端到端可用的 skill，覆盖不同场景和复杂度。<strong>所有示例都放在 <a href="examples/"><code>examples/</code></a> 目录</strong>，可以直接复制使用。</p>
 </blockquote>
 <hr />
 <h2 id="_1">示例目录</h2>
@@ -839,7 +840,7 @@ python<span class="w"> </span>~/.claude/skills/pdf-form-filler/scripts/extract_f
 <ul>
 <li>安全审查详细清单见 <a href="references/security-checklist.md" target="_blank" class="example-link" title="教程示例引用，点击查看源 md 文件">>references/security-checklist.md</a></li>
 <li>团队代码风格见 <a href="references/style-guide.md" target="_blank" class="example-link" title="教程示例引用，点击查看源 md 文件">>references/style-guide.md</a></li>
-<li>标准 PR 范例见 <a href="../examples/good-pr.md" target="_blank" class="example-link" title="教程示例引用，点击查看源 md 文件">>examples/good-pr.md</a></li>
+<li>标准 PR 范例见 <a href="examples/good-pr.md" target="_blank" class="example-link" title="教程示例引用，点击查看源 md 文件">>examples/good-pr.md</a></li>
 </ul>
 <div class="codehilite"><pre><span></span><code>### 4.2.3 references/security-checklist.md
 

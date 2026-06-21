@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<base href="/learn-anthropic-skills/">
 <title>第 8 章 · 调试与反模式：常见坑 + 排查方法 · learn-skills</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/[email protected]/styles/github-dark.min.css">
 <style>
@@ -353,7 +354,7 @@ footer a { color: var(--accent-2); text-decoration: none; }
 <div class="layout">
     <aside class="toc">
         <div class="toc-title">本页目录</div>
-        <p style='color: var(--muted); font-size: 0.8rem;'>无章节</p>
+        <ul><li><a href="#81">8.1 问题分类与排查路径</a><li><a href="#82">8.2 "完全不触发"</a><ul><li><a href="#_1">排查清单</a><li><a href="#_2">常见原因</a></ul></li><li><a href="#83">8.3 "误触发"</a><ul><li><a href="#_3">排查清单</a></ul></li><li><a href="#84">8.4 "加载失败 / 解析错误"</a><ul><li><a href="#_4">错误类型</a></ul></li><li><a href="#85">8.5 "执行失败"</a><ul><li><a href="#_5">排查</a></ul></li><li><a href="#86">8.6 "性能问题"</a><ul><li><a href="#_6">优化清单</a></ul></li><li><a href="#87-12">8.7 12 个常见反模式</a><ul><li><a href="#1description">反模式 1：description 写得太弱</a><li><a href="#2description">反模式 2：description 写得太泛</a><li><a href="#3">反模式 3：把整个工作流塞进主体</a><li><a href="#4">反模式 4：脚本里写对话感知逻辑</a><li><a href="#5">反模式 5：硬编码敏感信息</a><li><a href="#6-allowed-tools">反模式 6：不给 allowed-tools</a><li><a href="#7-disable-model-invocation">反模式 7：危险操作没加 disable-model-invocation</a><li><a href="#8_1">反模式 8：依赖没说清</a><li><a href="#9">反模式 9：脚本路径硬编码</a><li><a href="#10yaml">反模式 10：YAML 字符串里有特殊字符没转义</a><li><a href="#11-skill">反模式 11：拆得太细，几十个 skill</a><li><a href="#12-mcp">反模式 12：与现有工具 / MCP 职责重叠</a></ul></li><li><a href="#88">8.8 调试工具箱</a><ul><li><a href="#claude-code">Claude Code 内置</a><li><a href="#minimax-code">Minimax Code 中</a><li><a href="#_7">自检脚本</a><li><a href="#_8">手动触发测试</a><li><a href="#_9">日志</a></ul></li><li><a href="#89">8.9 调试流程图</a><li><a href="#810-sla">8.10 性能基准与 SLA</a><ul><li><a href="#_10">经验数字</a><li><a href="#checklist">优化 checklist</a></ul></li><li><a href="#811">8.11 复盘与迭代</a><ul><li><a href="#_11">持续改进循环</a><li><a href="#_12">团队复盘会议</a></ul></li><li><a href="#812">8.12 资源</a><li><a href="#813">8.13 接下来</a></ul>
     </aside>
     <article>
         <div class="chapter-meta">

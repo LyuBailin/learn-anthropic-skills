@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<base href="/learn-anthropic-skills/">
 <title>第 7 章 · 生态对照：Minimax Code、Cursor、Claude.ai、Trae · learn-skills</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/[email protected]/styles/github-dark.min.css">
 <style>
@@ -353,7 +354,7 @@ footer a { color: var(--accent-2); text-decoration: none; }
 <div class="layout">
     <aside class="toc">
         <div class="toc-title">本页目录</div>
-        <p style='color: var(--muted); font-size: 0.8rem;'>无章节</p>
+        <ul><li><a href="#71">7.1 全景图</a><li><a href="#72-anthropic">7.2 Anthropic 全家桶</a><ul><li><a href="#721-claudeai">7.2.1 Claude.ai（网页版）</a><li><a href="#722-claude-codecli">7.2.2 Claude Code（CLI）</a><li><a href="#723-messages-api">7.2.3 Messages API</a><li><a href="#724-agent-sdk">7.2.4 Agent SDK</a></ul></li><li><a href="#73-cursor">7.3 Cursor</a><ul><li><a href="#731-cursor">7.3.1 Cursor 的三套机制（容易混淆）</a><li><a href="#732-cursor-skills">7.3.2 Cursor Skills 规范</a><li><a href="#733">7.3.3 迁移路径</a></ul></li><li><a href="#74-trae">7.4 Trae（字节）</a><ul><li><a href="#741-trae">7.4.1 Trae 简介</a><li><a href="#742">7.4.2 目录与触发</a><li><a href="#743-trae">7.4.3 Trae 特色</a><li><a href="#744">7.4.4 迁移</a></ul></li><li><a href="#75-minimax-code">7.5 Minimax Code（我自己所在的系统）</a><ul><li><a href="#751-minimax-code-skill">7.5.1 Minimax Code 的 Skill 体系</a><li><a href="#752-anthropic">7.5.2 与 Anthropic 的差异</a><li><a href="#753-minimax-code">7.5.3 Minimax Code 的特殊能力</a><li><a href="#754-minimax-code-anthropic-skill">7.5.4 在 Minimax Code 中使用 Anthropic Skill</a><li><a href="#755-minimax-code-skill">7.5.5 Minimax Code 中的 skill 调试</a></ul></li><li><a href="#76-openai-chatgpt-codex">7.6 OpenAI ChatGPT / Codex</a><ul><li><a href="#761-chatgpt-custom-skills2026">7.6.1 ChatGPT Custom Skills（2026）</a><li><a href="#762-codex-cli">7.6.2 Codex CLI</a></ul></li><li><a href="#77-vs-code-jetbrains">7.7 VS Code / JetBrains 扩展</a><ul><li><a href="#771-vs-code-agent-skills">7.7.1 VS Code Agent Skills 扩展</a><li><a href="#772-jetbrains">7.7.2 JetBrains</a></ul></li><li><a href="#78">7.8 跨平台迁移指南</a><ul><li><a href="#781">7.8.1 通用迁移步骤</a><li><a href="#782">7.8.2 字段兼容性矩阵</a><li><a href="#783">7.8.3 平台差异的具体例子</a></ul></li><li><a href="#79">7.9 平台选型建议</a><ul><li><a href="#791-claude-code">7.9.1 用 Claude Code 当</a><li><a href="#792-minimax-code">7.9.2 用 Minimax Code 当</a><li><a href="#793-cursor">7.9.3 用 Cursor 当</a><li><a href="#794-trae">7.9.4 用 Trae 当</a><li><a href="#795-vs-code">7.9.5 用 VS Code 扩展当</a></ul></li><li><a href="#710">7.10 一个真实的迁移故事</a><li><a href="#711">7.11 关于"开放标准"</a><li><a href="#712">7.12 接下来</a></ul>
     </aside>
     <article>
         <div class="chapter-meta">

@@ -18,9 +18,14 @@ from markdown.extensions.codehilite import CodeHiliteExtension
 
 
 # ============ 配置 ============
-PROJECT_ROOT = Path(r"D:\Program Files\MiniMax Code\projects\learn-skills")
+PROJECT_ROOT = Path(__file__).parent.parent
 CHAPTERS_DIR = PROJECT_ROOT / "chapters"
 SITE_DIR = PROJECT_ROOT / "site"
+
+# GitHub Pages 部署在 /learn-anthropic-skills/ 子路径下
+# 用 <base href> 让所有相对路径自动正确解析
+# 本地预览（直接双击 html）时设为 "./" —— 但 GitHub Pages 必须带前缀
+BASE_URL = "/learn-anthropic-skills/"
 
 CHAPTERS = [
     ("01-concept",     "第 1 章 · 概念入门",          "15 min · 入门"),
@@ -40,6 +45,7 @@ HTML_TEMPLATE = """<!DOCTYPE html>
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<base href="{base_url}">
 <title>{title} · learn-skills</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/[email protected]/styles/github-dark.min.css">
 <style>
@@ -482,27 +488,44 @@ def build_nav_links(current_idx: int) -> str:
 
 
 def build_toc(html: str) -> str:
-    """从 HTML 里提取 h2/h3 生成 TOC"""
-    items = re.findall(r'<h([23]) id="([^"]+)"[^>]*>(.+?)\s*<a class="headerlink"', html)
-    if not items:
+    """从 HTML 里提取 h2/h3 生成 TOC
+    兼容 add_headerlinks 生成的格式：<h2 id="slug">标题 <a class="headerlink" href="#slug">#</a></h2>
+    """
+    # 用更稳健的正则：先匹配整个标题块
+    pattern = r'<h([23])\s+id="([^"]+)"[^>]*>(.+?)</h\1>'
+    matches = re.findall(pattern, html, re.DOTALL)
+    if not matches:
         return "<p style='color: var(--muted); font-size: 0.8rem;'>无章节</p>"
 
-    toc = ["<ul>"]
-    current_level = 2
-    for level, slug, title in items:
-        level = int(level)
-        if level == 2 and current_level == 3:
-            toc.append("</ul></li>")
-        if level == 2 and current_level == 2:
-            pass
-        if level == 3 and current_level == 2:
-            toc.append("<li><ul>")
-        # 清理标题
-        clean_title = re.sub(r'<[^>]+>', '', title).strip()
-        toc.append(f'<li><a href="#{slug}">{clean_title}</a>')
-        current_level = level
-    toc.append("</li></ul>" if current_level == 3 else "</ul>")
-    return "".join(toc)
+    toc_html = ['<ul>']
+    prev_level = 2
+
+    for level_str, slug, raw_title in matches:
+        level = int(level_str)
+        # 清理标题文本（去掉所有 HTML 标签）
+        clean_title = re.sub(r'<[^>]+>', '', raw_title).strip()
+        # 去掉尾部 # 符号（来自 headerlink）
+        clean_title = re.sub(r'\s*#\s*$', '', clean_title).strip()
+
+        if level == 2:
+            # 关闭之前的 ul（如果之前是 h3）
+            if prev_level == 3:
+                toc_html.append('</ul></li>')
+            toc_html.append(f'<li><a href="#{slug}">{clean_title}</a>')
+        elif level == 3:
+            # 如果之前是 h2，开启新的嵌套 ul
+            if prev_level == 2:
+                toc_html.append('<ul>')
+            toc_html.append(f'<li><a href="#{slug}">{clean_title}</a>')
+
+        prev_level = level
+
+    # 收尾
+    if prev_level == 3:
+        toc_html.append('</ul></li>')
+    toc_html.append('</ul>')
+
+    return "".join(toc_html)
 
 
 # ============ 主转换流程 ============
@@ -552,13 +575,17 @@ def convert_chapter(slug: str, label: str, duration: str, idx: int) -> None:
     )
 
     # 跨目录引用（指向 examples/、resources/）：
-    #   ../examples/xxx   → ../examples/xxx  （源 md 已经写对，HTML 也在 site/，不用改）
-    #   examples/xxx      → ../examples/xxx  （HTML 在 site/，要 ../）
+    # HTML 文件在 site/，源 md 用 ../examples/xxx 引用
+    # 因为 HTML 头部有 <base href="/learn-anthropic-skills/">，
+    # 浏览器把"examples/xxx"解析为"/learn-anthropic-skills/examples/xxx"
+    # 所以这里把 "../examples/" 去掉 ../ 前缀
     body_html = re.sub(
-        r'href="(?!.*\.\./)(examples|resources|chapters)/',
-        r'href="../\1/',
+        r'href="\.\./(examples|resources|chapters)/',
+        r'href="\1/',
         body_html
     )
+    # 同上，把直接写 "examples/xxx"（少了 ../）也归一化为 "examples/xxx"
+    # （虽然源 md 都用 ../，但为稳健性还是处理一下）
 
     # 教程里的"虚构"占位引用（如 configuration.md、review-standards.md、good-pr.md）
     # 这些是教程正文里举例说明"skill 该长什么样"的占位符，实际并不存在
@@ -587,6 +614,7 @@ def convert_chapter(slug: str, label: str, duration: str, idx: int) -> None:
     # 渲染最终 HTML
     final_html = HTML_TEMPLATE.format(
         title=page_title,
+        base_url=BASE_URL,
         nav_links=nav,
         toc=toc,
         chapter_label=label,

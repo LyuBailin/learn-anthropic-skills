@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<base href="/learn-anthropic-skills/">
 <title>第 2 章 · 文件解剖：SKILL.md 完整解读 · learn-skills</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/[email protected]/styles/github-dark.min.css">
 <style>
@@ -353,7 +354,7 @@ footer a { color: var(--accent-2); text-decoration: none; }
 <div class="layout">
     <aside class="toc">
         <div class="toc-title">本页目录</div>
-        <p style='color: var(--muted); font-size: 0.8rem;'>无章节</p>
+        <ul><li><a href="#21-skill">2.1 一个最简 Skill</a><li><a href="#22-skillmd">2.2 SKILL.md 的两段式结构</a><li><a href="#23-yaml-frontmatter">2.3 YAML Frontmatter 字段完整参考</a><ul><li><a href="#231">2.3.1 必填字段</a><li><a href="#232">2.3.2 推荐字段</a><li><a href="#233">2.3.3 调用控制字段</a><li><a href="#234">2.3.4 工具与执行控制</a><li><a href="#235">2.3.5 路径与环境</a></ul></li><li><a href="#24-markdown">2.4 Markdown 主体怎么写</a><ul><li><a href="#241">2.4.1 推荐结构</a></ul></li><li><a href="#_1">常见问题</a><li><a href="#_2">相关资源</a><ul><li><a href="#243">2.4.3 大小建议</a><li><a href="#244-why-must">2.4.4 解释 Why 而非堆砌 MUST</a></ul></li><li><a href="#25">2.5 完整目录结构</a><ul><li><a href="#251">2.5.1 最小结构</a><li><a href="#252">2.5.2 典型结构</a><li><a href="#253">2.5.3 多层结构</a><li><a href="#254">2.5.4 文件名即导航信号</a></ul></li><li><a href="#26-yaml">2.6 YAML 常见错误</a><ul><li><a href="#1yaml">错误 1：YAML 缩进错误</a><li><a href="#2">错误 2：多行字符串符号</a><li><a href="#3">错误 3：必填字段缺失</a><li><a href="#4name">错误 4：name 命名违规</a></ul></li><li><a href="#27">2.7 完整示例</a><ul><li><a href="#2_1">2. 分类审查</a><li><a href="#3_1">3. 输出格式</a></ul></li><li><a href="#_6">关键决策点</a><li><a href="#_7">完整检查清单</a><li><a href="#_8">相关资源</a><li><a href="#28">2.8 接下来</a></ul>
     </aside>
     <article>
         <div class="chapter-meta">
@@ -667,7 +668,7 @@ A: 回答...</p>
 <h2 id="_2">相关资源</h2>
 <ul>
 <li>详细配置见 <a href="configuration.md" target="_blank" class="example-link" title="教程示例引用，点击查看源 md 文件">>configuration.md</a></li>
-<li>示例见 <a href="../examples/">examples/</a></li>
+<li>示例见 <a href="examples/">examples/</a></li>
 </ul>
 <div class="codehilite"><pre><span></span><code>### 2.4.2 引用资源文件
 
@@ -962,7 +963,7 @@ ModuleNotFoundError。
 <h2 id="_8">相关资源</h2>
 <ul>
 <li>详细审查规范见 <a href="review-standards.md" target="_blank" class="example-link" title="教程示例引用，点击查看源 md 文件">>review-standards.md</a></li>
-<li>常见问题案例见 <a href="../examples/">examples/</a><br />
+<li>常见问题案例见 <a href="examples/">examples/</a><br />
 ```</li>
 </ul>
 <hr />
