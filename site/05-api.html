@@ -1,0 +1,1060 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>第 5 章 · API 集成：Messages API + Files API + Code Execution · learn-skills</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/[email protected]/styles/github-dark.min.css">
+<style>
+:root {
+    --bg: #0d1117;
+    --panel: #161b22;
+    --border: #30363d;
+    --text: #e6edf3;
+    --muted: #8b949e;
+    --accent: #f0883e;
+    --accent-2: #58a6ff;
+    --link: #58a6ff;
+    --code-bg: #161b22;
+}
+* { box-sizing: border-box; }
+html, body {
+    margin: 0;
+    padding: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+    line-height: 1.7;
+    font-size: 16px;
+}
+
+/* 顶部导航 */
+header.nav {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: rgba(13, 17, 23, 0.95);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--border);
+    padding: 12px 0;
+}
+.nav-container {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 0 24px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+.nav-brand {
+    font-weight: 700;
+    font-size: 1.05rem;
+    color: var(--accent);
+    text-decoration: none;
+    margin-right: 16px;
+}
+.nav-brand:hover { color: var(--text); }
+.nav-link {
+    color: var(--muted);
+    text-decoration: none;
+    font-size: 0.88rem;
+    padding: 4px 10px;
+    border-radius: 6px;
+    transition: all 0.15s;
+    white-space: nowrap;
+}
+.nav-link:hover {
+    color: var(--text);
+    background: var(--panel);
+}
+.nav-link.active {
+    color: var(--accent);
+    background: rgba(240, 136, 62, 0.1);
+    border: 1px solid rgba(240, 136, 62, 0.3);
+}
+.nav-spacer { flex: 1; }
+.nav-extra {
+    color: var(--muted);
+    font-size: 0.8rem;
+    padding: 4px 8px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+}
+
+/* 主体布局 */
+.layout {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 32px 24px;
+    display: grid;
+    grid-template-columns: 220px 1fr;
+    gap: 32px;
+}
+@media (max-width: 900px) {
+    .layout { grid-template-columns: 1fr; }
+    aside.toc { display: none; }
+}
+
+/* TOC */
+aside.toc {
+    position: sticky;
+    top: 70px;
+    max-height: calc(100vh - 90px);
+    overflow-y: auto;
+    font-size: 0.85rem;
+}
+.toc-title {
+    color: var(--muted);
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 12px;
+}
+.toc ul {
+    list-style: none;
+    padding-left: 0;
+    margin: 0;
+}
+.toc ul ul {
+    padding-left: 16px;
+    border-left: 1px solid var(--border);
+    margin-top: 4px;
+}
+.toc li { margin: 4px 0; }
+.toc a {
+    color: var(--muted);
+    text-decoration: none;
+    display: block;
+    padding: 3px 8px;
+    border-radius: 4px;
+    transition: all 0.15s;
+}
+.toc a:hover {
+    color: var(--accent-2);
+    background: var(--panel);
+}
+.toc a.active {
+    color: var(--accent);
+    background: rgba(240, 136, 62, 0.08);
+}
+
+/* 内容 */
+article {
+    min-width: 0;
+    max-width: 920px;
+}
+article h1 {
+    font-size: 2.2rem;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 12px;
+    margin-top: 0;
+    margin-bottom: 24px;
+    color: var(--text);
+    letter-spacing: -0.02em;
+}
+article h2 {
+    font-size: 1.55rem;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 8px;
+    margin-top: 40px;
+    color: var(--text);
+}
+article h3 {
+    font-size: 1.2rem;
+    color: var(--text);
+    margin-top: 28px;
+}
+article h4 {
+    font-size: 1rem;
+    color: var(--accent-2);
+    margin-top: 20px;
+}
+article p { margin: 12px 0; }
+article a {
+    color: var(--link);
+    text-decoration: none;
+    border-bottom: 1px dashed transparent;
+}
+article a:hover {
+    border-bottom-color: var(--link);
+}
+article a.example-link {
+    color: var(--muted);
+    border-bottom: 1px dashed var(--muted);
+    font-style: italic;
+}
+article ul, article ol { padding-left: 28px; }
+article li { margin: 4px 0; }
+article hr {
+    border: 0;
+    border-top: 1px solid var(--border);
+    margin: 32px 0;
+}
+article blockquote {
+    margin: 16px 0;
+    padding: 8px 16px;
+    border-left: 4px solid var(--accent);
+    background: rgba(240, 136, 62, 0.06);
+    color: var(--muted);
+    border-radius: 0 6px 6px 0;
+}
+article blockquote p { margin: 4px 0; }
+article strong { color: var(--text); }
+article em { color: var(--accent); font-style: normal; }
+
+/* 标题锚点 */
+article h1, article h2, article h3, article h4 {
+    position: relative;
+}
+article h1:hover .headerlink,
+article h2:hover .headerlink,
+article h3:hover .headerlink,
+article h4:hover .headerlink {
+    opacity: 1;
+}
+.headerlink {
+    position: absolute;
+    left: -24px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--muted);
+    text-decoration: none;
+    opacity: 0;
+    font-weight: 400;
+    transition: opacity 0.15s;
+}
+.headerlink:hover { color: var(--accent); }
+
+/* 表格 */
+article table {
+    border-collapse: collapse;
+    width: 100%;
+    margin: 16px 0;
+    font-size: 0.92rem;
+}
+article th, article td {
+    border: 1px solid var(--border);
+    padding: 8px 14px;
+    text-align: left;
+}
+article th {
+    background: var(--panel);
+    color: var(--accent-2);
+    font-weight: 600;
+}
+article tr:nth-child(even) td { background: rgba(255,255,255,0.02); }
+
+/* 代码 */
+article code {
+    background: rgba(110, 118, 129, 0.2);
+    color: #ff7b72;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 0.88em;
+    font-family: "JetBrains Mono", "Cascadia Code", Consolas, monospace;
+}
+article pre {
+    background: #161b22 !important;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 14px 16px;
+    overflow-x: auto;
+    font-size: 0.86rem;
+    line-height: 1.5;
+    margin: 14px 0;
+}
+article pre code {
+    background: none;
+    color: inherit;
+    padding: 0;
+    font-size: inherit;
+}
+
+/* 任务列表 */
+article input[type="checkbox"] { margin-right: 6px; }
+
+/* 底部 */
+footer {
+    max-width: 1280px;
+    margin: 60px auto 0;
+    padding: 24px;
+    border-top: 1px solid var(--border);
+    color: var(--muted);
+    font-size: 0.85rem;
+    text-align: center;
+}
+footer a { color: var(--accent-2); text-decoration: none; }
+
+/* 章节元信息 */
+.chapter-meta {
+    color: var(--muted);
+    font-size: 0.9rem;
+    margin-bottom: 32px;
+    display: flex;
+    gap: 16px;
+    align-items: center;
+}
+.chapter-meta .tag {
+    background: rgba(240, 136, 62, 0.12);
+    color: var(--accent);
+    padding: 3px 10px;
+    border-radius: 999px;
+    font-size: 0.78rem;
+    font-weight: 600;
+}
+
+/* 返回顶部 */
+.back-to-top {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    width: 40px;
+    height: 40px;
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 50%;
+    color: var(--muted);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    transition: all 0.2s;
+    z-index: 50;
+}
+.back-to-top.visible {
+    display: flex;
+}
+.back-to-top:hover {
+    color: var(--accent);
+    border-color: var(--accent);
+}
+</style>
+</head>
+<body>
+
+<header class="nav">
+    <div class="nav-container">
+        <a href="index.html" class="nav-brand">learn-skills</a>
+        <a href="01-concept.html" class="nav-link">01. 概念入门</a>
+        <a href="02-anatomy.html" class="nav-link">02. 文件解剖</a>
+        <a href="03-loading.html" class="nav-link">03. 加载机制</a>
+        <a href="04-writing.html" class="nav-link">04. 实战编写</a>
+        <a href="05-api.html" class="nav-link active">05. API 集成</a>
+        <a href="06-design.html" class="nav-link">06. 体系设计</a>
+        <a href="07-ecosystem.html" class="nav-link">07. 生态对照</a>
+        <a href="08-debug.html" class="nav-link">08. 调试与反模式</a>
+        <div class="nav-spacer"></div>
+        <a href="index.html" class="nav-extra">总览</a>
+    </div>
+</header>
+
+<div class="layout">
+    <aside class="toc">
+        <div class="toc-title">本页目录</div>
+        <p style='color: var(--muted); font-size: 0.8rem;'>无章节</p>
+    </aside>
+    <article>
+        <div class="chapter-meta">
+            <span class="tag">第 5 章 · API 集成</span>
+            <span>30 min · 进阶</span>
+        </div>
+        <h1 id="5-api-messages-api-files-api-code-execution">第 5 章 · API 集成：Messages API + Files API + Code Execution</h1>
+<blockquote>
+<p>读完这一章你应该能：① 知道 Claude API 里 Skill 怎么"能干活"；② 掌握 Files API 上传下载；③ 写一个 Python/TypeScript 集成示例。</p>
+</blockquote>
+<hr />
+<h2 id="51-api">5.1 API 集成的前提条件</h2>
+<p>在 Claude API 里使用 Skill，跟 Claude Code / Claude.ai 比有<strong>额外要求</strong>：</p>
+<table>
+<thead>
+<tr>
+<th>环境</th>
+<th>Skill 触发</th>
+<th>执行能力</th>
+<th>文件系统</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Claude.ai</strong></td>
+<td>✅ 自动</td>
+<td>✅ 内置</td>
+<td>❌ 沙箱</td>
+</tr>
+<tr>
+<td><strong>Claude Code</strong></td>
+<td>✅ 自动</td>
+<td>✅ Bash</td>
+<td>✅ 本地</td>
+</tr>
+<tr>
+<td><strong>Anthropic API</strong></td>
+<td>✅ 自动</td>
+<td>⚠️ 需 Code Execution Tool beta</td>
+<td>⚠️ 需 Files API</td>
+</tr>
+</tbody>
+</table>
+<p><strong>关键认知</strong>：<br />
+- <strong>API 默认没有执行能力</strong>——Claude 读不了文件、跑不了脚本<br />
+- <strong>要让 Skill "能干活"，必须显式接入 Code Execution Tool</strong><br />
+- <strong>要让 Claude 读用户上传的文件，必须用 Files API</strong></p>
+<div class="codehilite"><pre><span></span><code>┌─────────────────────────────────────┐
+│  Claude API 集成 Skill 的三大组件     │
+├─────────────────────────────────────┤
+│ 1. Skills API    加载 skill 定义     │
+│ 2. Files API     上传输入/下载输出   │
+│ 3. Code Execution 沙箱执行脚本       │
+└─────────────────────────────────────┘
+</code></pre></div>
+
+<hr />
+<h2 id="52-api">5.2 三个 API 详解</h2>
+<h3 id="521-skills-api">5.2.1 Skills API</h3>
+<p><strong>端点</strong>：<code>/v1/skills</code>（beta）</p>
+<p><strong>当前可用操作</strong>：<br />
+- <code>client.beta.skills.create()</code> — 上传新 skill<br />
+- <code>client.beta.skills.list()</code> — 列出 skill<br />
+- <code>client.beta.skills.retrieve()</code> — 获取 skill 详情<br />
+- <code>client.beta.skills.delete()</code> — 删除 skill<br />
+- <code>client.beta.skills.versions.list()</code> — 查看版本历史</p>
+<p><strong>Upload 格式</strong>：必须先打包成 zip</p>
+<div class="codehilite"><pre><span></span><code><span class="c1"># Python SDK</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">zipfile</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">pack_skill</span><span class="p">(</span><span class="n">skill_dir</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">output_zip</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+    <span class="k">with</span> <span class="n">zipfile</span><span class="o">.</span><span class="n">ZipFile</span><span class="p">(</span><span class="n">output_zip</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">,</span> <span class="n">zipfile</span><span class="o">.</span><span class="n">ZIP_DEFLATED</span><span class="p">)</span> <span class="k">as</span> <span class="n">zf</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">file</span> <span class="ow">in</span> <span class="n">Path</span><span class="p">(</span><span class="n">skill_dir</span><span class="p">)</span><span class="o">.</span><span class="n">rglob</span><span class="p">(</span><span class="s2">&quot;*&quot;</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">file</span><span class="o">.</span><span class="n">is_file</span><span class="p">():</span>
+                <span class="n">zf</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="n">file</span><span class="o">.</span><span class="n">relative_to</span><span class="p">(</span><span class="n">skill_dir</span><span class="p">))</span>
+
+<span class="c1"># 调用</span>
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;skill.zip&quot;</span><span class="p">,</span> <span class="s2">&quot;rb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+    <span class="n">skill</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">beta</span><span class="o">.</span><span class="n">skills</span><span class="o">.</span><span class="n">create</span><span class="p">(</span>
+        <span class="n">name</span><span class="o">=</span><span class="s2">&quot;my-skill&quot;</span><span class="p">,</span>
+        <span class="n">skill_data</span><span class="o">=</span><span class="n">f</span><span class="p">,</span>
+        <span class="n">betas</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;skills-2025-01-01&quot;</span><span class="p">]</span>
+    <span class="p">)</span>
+</code></pre></div>
+
+<p><strong>调用 skill</strong>：</p>
+<div class="codehilite"><pre><span></span><code><span class="n">response</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">beta</span><span class="o">.</span><span class="n">messages</span><span class="o">.</span><span class="n">create</span><span class="p">(</span>
+    <span class="n">model</span><span class="o">=</span><span class="s2">&quot;claude-sonnet-4-5&quot;</span><span class="p">,</span>
+    <span class="n">max_tokens</span><span class="o">=</span><span class="mi">4096</span><span class="p">,</span>
+    <span class="n">betas</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;skills-2025-01-01&quot;</span><span class="p">],</span>
+    <span class="n">skills</span><span class="o">=</span><span class="p">[</span>
+        <span class="p">{</span>
+            <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;custom&quot;</span><span class="p">,</span>          <span class="c1"># 或 &quot;anthropic&quot; 用官方内置</span>
+            <span class="s2">&quot;skill_id&quot;</span><span class="p">:</span> <span class="s2">&quot;skill_xxx&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;version&quot;</span><span class="p">:</span> <span class="s2">&quot;latest&quot;</span>
+        <span class="p">}</span>
+    <span class="p">],</span>
+    <span class="n">messages</span><span class="o">=</span><span class="p">[</span>
+        <span class="p">{</span><span class="s2">&quot;role&quot;</span><span class="p">:</span> <span class="s2">&quot;user&quot;</span><span class="p">,</span> <span class="s2">&quot;content&quot;</span><span class="p">:</span> <span class="s2">&quot;用我的 skill 处理这个 PDF&quot;</span><span class="p">}</span>
+    <span class="p">]</span>
+<span class="p">)</span>
+</code></pre></div>
+
+<p><strong>Beta 头</strong>：必须包含 <code>skills-2025-01-01</code></p>
+<h3 id="522-files-api">5.2.2 Files API</h3>
+<p><strong>为什么需要</strong>：API 不能直接访问你的真实机器文件系统，Files API 是文件传输的桥梁。</p>
+<p><strong>端点</strong>：<code>/v1/files</code>（beta）</p>
+<p><strong>Beta 头</strong>：<code>files-api-2025-04-14</code></p>
+<p><strong>上传</strong>：</p>
+<div class="codehilite"><pre><span></span><code><span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;./input.pdf&quot;</span><span class="p">,</span> <span class="s2">&quot;rb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+    <span class="n">file_obj</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">beta</span><span class="o">.</span><span class="n">files</span><span class="o">.</span><span class="n">upload</span><span class="p">(</span>
+        <span class="n">file</span><span class="o">=</span><span class="n">f</span><span class="p">,</span>
+        <span class="n">betas</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;files-api-2025-04-14&quot;</span><span class="p">]</span>
+    <span class="p">)</span>
+<span class="n">file_id</span> <span class="o">=</span> <span class="n">file_obj</span><span class="o">.</span><span class="n">id</span>  <span class="c1"># 后续用这个 ID 引用</span>
+</code></pre></div>
+
+<p><strong>下载</strong>：</p>
+<div class="codehilite"><pre><span></span><code><span class="n">file_content</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">beta</span><span class="o">.</span><span class="n">files</span><span class="o">.</span><span class="n">download</span><span class="p">(</span>
+    <span class="n">file_id</span><span class="o">=</span><span class="s2">&quot;file_xxx&quot;</span><span class="p">,</span>
+    <span class="n">betas</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;files-api-2025-04-14&quot;</span><span class="p">]</span>
+<span class="p">)</span>
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;./output.pdf&quot;</span><span class="p">,</span> <span class="s2">&quot;wb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+    <span class="n">file_content</span><span class="o">.</span><span class="n">write_to_file</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+</code></pre></div>
+
+<p><strong>在消息中引用</strong>：</p>
+<div class="codehilite"><pre><span></span><code><span class="n">response</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">beta</span><span class="o">.</span><span class="n">messages</span><span class="o">.</span><span class="n">create</span><span class="p">(</span>
+    <span class="n">model</span><span class="o">=</span><span class="s2">&quot;claude-sonnet-4-5&quot;</span><span class="p">,</span>
+    <span class="n">max_tokens</span><span class="o">=</span><span class="mi">4096</span><span class="p">,</span>
+    <span class="n">betas</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;files-api-2025-04-14&quot;</span><span class="p">,</span> <span class="s2">&quot;skills-2025-01-01&quot;</span><span class="p">],</span>
+    <span class="n">skills</span><span class="o">=</span><span class="p">[{</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;custom&quot;</span><span class="p">,</span> <span class="s2">&quot;skill_id&quot;</span><span class="p">:</span> <span class="s2">&quot;skill_xxx&quot;</span><span class="p">,</span> <span class="s2">&quot;version&quot;</span><span class="p">:</span> <span class="s2">&quot;latest&quot;</span><span class="p">}],</span>
+    <span class="n">messages</span><span class="o">=</span><span class="p">[{</span>
+        <span class="s2">&quot;role&quot;</span><span class="p">:</span> <span class="s2">&quot;user&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;content&quot;</span><span class="p">:</span> <span class="p">[</span>
+            <span class="p">{</span>
+                <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;file&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;file&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;file_id&quot;</span><span class="p">:</span> <span class="n">file_id</span><span class="p">}</span>
+            <span class="p">},</span>
+            <span class="p">{</span>
+                <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;text&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;text&quot;</span><span class="p">:</span> <span class="s2">&quot;帮我填这个 PDF 表单&quot;</span>
+            <span class="p">}</span>
+        <span class="p">]</span>
+    <span class="p">}]</span>
+<span class="p">)</span>
+</code></pre></div>
+
+<p><strong>注意事项</strong>：<br />
+- File ID 是临时的，会话结束可能失效<br />
+- <strong>及时下载</strong>生成的输出<br />
+- 单个文件有大小限制（具体看官方文档）</p>
+<h3 id="523-code-execution-tool">5.2.3 Code Execution Tool</h3>
+<p><strong>为什么需要</strong>：Skill 里如果有"需要执行脚本"的步骤，<strong>必须</strong>配 Code Execution Tool，否则 Claude 只能"知道流程"但<strong>跑不起来</strong>。</p>
+<p><strong>Beta 头</strong>：<code>code-execution-2025-01-01</code></p>
+<p><strong>启用方式</strong>：</p>
+<div class="codehilite"><pre><span></span><code><span class="n">response</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">beta</span><span class="o">.</span><span class="n">messages</span><span class="o">.</span><span class="n">create</span><span class="p">(</span>
+    <span class="n">model</span><span class="o">=</span><span class="s2">&quot;claude-sonnet-4-5&quot;</span><span class="p">,</span>
+    <span class="n">max_tokens</span><span class="o">=</span><span class="mi">4096</span><span class="p">,</span>
+    <span class="n">betas</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;code-execution-2025-01-01&quot;</span><span class="p">,</span> <span class="s2">&quot;skills-2025-01-01&quot;</span><span class="p">],</span>
+    <span class="n">skills</span><span class="o">=</span><span class="p">[{</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;custom&quot;</span><span class="p">,</span> <span class="s2">&quot;skill_id&quot;</span><span class="p">:</span> <span class="s2">&quot;skill_xxx&quot;</span><span class="p">,</span> <span class="s2">&quot;version&quot;</span><span class="p">:</span> <span class="s2">&quot;latest&quot;</span><span class="p">}],</span>
+    <span class="n">tools</span><span class="o">=</span><span class="p">[</span>
+        <span class="p">{</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;code_execution_20250101&quot;</span><span class="p">,</span> <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;code_execution&quot;</span><span class="p">}</span>
+    <span class="p">],</span>
+    <span class="n">messages</span><span class="o">=</span><span class="p">[</span><span class="o">...</span><span class="p">]</span>
+<span class="p">)</span>
+</code></pre></div>
+
+<p><strong>沙箱能力</strong>：<br />
+- ✅ 跑 bash / shell<br />
+- ✅ 创建 / 编辑 / 查看文件<br />
+- ✅ 运行 Python 脚本<br />
+- ⚠️ CPU / 内存 / 磁盘受限<br />
+- ⚠️ 通常<strong>无互联网</strong>（安全考虑）</p>
+<p><strong>沙箱中的文件</strong>：</p>
+<p>如果 Skill 在沙箱中创建了文件，响应里会带 <code>file_id</code>：</p>
+<div class="codehilite"><pre><span></span><code><span class="k">for</span> <span class="n">block</span> <span class="ow">in</span> <span class="n">response</span><span class="o">.</span><span class="n">content</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">block</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="s2">&quot;bash_code_execution_tool_result&quot;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">block</span><span class="p">,</span> <span class="s2">&quot;content&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">block</span><span class="o">.</span><span class="n">content</span><span class="p">,</span> <span class="s2">&quot;content&quot;</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">result_block</span> <span class="ow">in</span> <span class="n">block</span><span class="o">.</span><span class="n">content</span><span class="o">.</span><span class="n">content</span><span class="p">:</span>
+                <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">result_block</span><span class="p">,</span> <span class="s2">&quot;file_id&quot;</span><span class="p">):</span>
+                    <span class="n">generated_file_id</span> <span class="o">=</span> <span class="n">result_block</span><span class="o">.</span><span class="n">file_id</span>
+                    <span class="c1"># 用 Files API 下载</span>
+</code></pre></div>
+
+<hr />
+<h2 id="53">5.3 完整的端到端示例</h2>
+<p>下面是一个<strong>生产可用</strong>的 Python 集成代码（已写好放在 <code>examples/api-skill-python/api_skill_demo.py</code>）：</p>
+<div class="codehilite"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">zipfile</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">tempfile</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">anthropic</span><span class="w"> </span><span class="kn">import</span> <span class="n">Anthropic</span>
+
+<span class="n">client</span> <span class="o">=</span> <span class="n">Anthropic</span><span class="p">(</span><span class="n">api_key</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s2">&quot;ANTHROPIC_API_KEY&quot;</span><span class="p">])</span>
+
+<span class="n">BETAS</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s2">&quot;code-execution-2025-01-01&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;skills-2025-01-01&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;files-api-2025-04-14&quot;</span><span class="p">,</span>
+<span class="p">]</span>
+
+<span class="c1"># 1. 打包并上传 Skill</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">upload_skill</span><span class="p">(</span><span class="n">skill_dir</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="k">with</span> <span class="n">tempfile</span><span class="o">.</span><span class="n">NamedTemporaryFile</span><span class="p">(</span><span class="n">suffix</span><span class="o">=</span><span class="s2">&quot;.zip&quot;</span><span class="p">,</span> <span class="n">delete</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span> <span class="k">as</span> <span class="n">tmp</span><span class="p">:</span>
+        <span class="n">zip_path</span> <span class="o">=</span> <span class="n">tmp</span><span class="o">.</span><span class="n">name</span>
+    <span class="k">with</span> <span class="n">zipfile</span><span class="o">.</span><span class="n">ZipFile</span><span class="p">(</span><span class="n">zip_path</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">,</span> <span class="n">zipfile</span><span class="o">.</span><span class="n">ZIP_DEFLATED</span><span class="p">)</span> <span class="k">as</span> <span class="n">zf</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">Path</span><span class="p">(</span><span class="n">skill_dir</span><span class="p">)</span><span class="o">.</span><span class="n">rglob</span><span class="p">(</span><span class="s2">&quot;*&quot;</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">f</span><span class="o">.</span><span class="n">is_file</span><span class="p">():</span>
+                <span class="n">zf</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">f</span><span class="o">.</span><span class="n">relative_to</span><span class="p">(</span><span class="n">skill_dir</span><span class="p">))</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">zip_path</span><span class="p">,</span> <span class="s2">&quot;rb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="n">skill</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">beta</span><span class="o">.</span><span class="n">skills</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="n">skill_data</span><span class="o">=</span><span class="n">f</span><span class="p">,</span> <span class="n">betas</span><span class="o">=</span><span class="n">BETAS</span><span class="p">)</span>
+    <span class="n">os</span><span class="o">.</span><span class="n">unlink</span><span class="p">(</span><span class="n">zip_path</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">skill</span><span class="o">.</span><span class="n">id</span>
+
+<span class="c1"># 2. 端到端：上传文件 + 调用 skill + 下载结果</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">process_pdf</span><span class="p">(</span><span class="n">skill_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">pdf_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">fields</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
+    <span class="c1"># 上传输入</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">pdf_path</span><span class="p">,</span> <span class="s2">&quot;rb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="n">file_obj</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">beta</span><span class="o">.</span><span class="n">files</span><span class="o">.</span><span class="n">upload</span><span class="p">(</span><span class="n">file</span><span class="o">=</span><span class="n">f</span><span class="p">,</span> <span class="n">betas</span><span class="o">=</span><span class="n">BETAS</span><span class="p">)</span>
+
+    <span class="c1"># 调用</span>
+    <span class="n">response</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">beta</span><span class="o">.</span><span class="n">messages</span><span class="o">.</span><span class="n">create</span><span class="p">(</span>
+        <span class="n">model</span><span class="o">=</span><span class="s2">&quot;claude-sonnet-4-5&quot;</span><span class="p">,</span>
+        <span class="n">max_tokens</span><span class="o">=</span><span class="mi">4096</span><span class="p">,</span>
+        <span class="n">betas</span><span class="o">=</span><span class="n">BETAS</span><span class="p">,</span>
+        <span class="n">skills</span><span class="o">=</span><span class="p">[{</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;custom&quot;</span><span class="p">,</span> <span class="s2">&quot;skill_id&quot;</span><span class="p">:</span> <span class="n">skill_id</span><span class="p">,</span> <span class="s2">&quot;version&quot;</span><span class="p">:</span> <span class="s2">&quot;latest&quot;</span><span class="p">}],</span>
+        <span class="n">tools</span><span class="o">=</span><span class="p">[{</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;code_execution_20250101&quot;</span><span class="p">,</span> <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;code_execution&quot;</span><span class="p">}],</span>
+        <span class="n">messages</span><span class="o">=</span><span class="p">[{</span>
+            <span class="s2">&quot;role&quot;</span><span class="p">:</span> <span class="s2">&quot;user&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;content&quot;</span><span class="p">:</span> <span class="p">[</span>
+                <span class="p">{</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;file&quot;</span><span class="p">,</span> <span class="s2">&quot;file&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;file_id&quot;</span><span class="p">:</span> <span class="n">file_obj</span><span class="o">.</span><span class="n">id</span><span class="p">}},</span>
+                <span class="p">{</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;text&quot;</span><span class="p">,</span> <span class="s2">&quot;text&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;填写表单，字段：</span><span class="si">{</span><span class="n">fields</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">}</span>
+            <span class="p">]</span>
+        <span class="p">}]</span>
+    <span class="p">)</span>
+
+    <span class="c1"># 提取响应</span>
+    <span class="n">text</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+    <span class="k">for</span> <span class="n">block</span> <span class="ow">in</span> <span class="n">response</span><span class="o">.</span><span class="n">content</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">block</span><span class="p">,</span> <span class="s2">&quot;text&quot;</span><span class="p">):</span>
+            <span class="n">text</span> <span class="o">+=</span> <span class="n">block</span><span class="o">.</span><span class="n">text</span>
+
+    <span class="k">return</span> <span class="n">text</span>
+
+<span class="c1"># 3. 运行</span>
+<span class="n">skill_id</span> <span class="o">=</span> <span class="n">upload_skill</span><span class="p">(</span><span class="s2">&quot;./pdf-form-filler&quot;</span><span class="p">,</span> <span class="s2">&quot;PDF Filler&quot;</span><span class="p">)</span>
+<span class="n">result</span> <span class="o">=</span> <span class="n">process_pdf</span><span class="p">(</span><span class="n">skill_id</span><span class="p">,</span> <span class="s2">&quot;./sample.pdf&quot;</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;张三&quot;</span><span class="p">})</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+</code></pre></div>
+
+<p>完整可运行版本见 <a href="../examples/api-skill-python/"><code>examples/api-skill-python/</code></a>。</p>
+<hr />
+<h2 id="54-typescript-nodejs">5.4 TypeScript / Node.js 版本</h2>
+<h3 id="_1">安装</h3>
+<div class="codehilite"><pre><span></span><code>npm<span class="w"> </span>install<span class="w"> </span>@anthropic-ai/sdk
+</code></pre></div>
+
+<h3 id="_2">完整示例</h3>
+<div class="codehilite"><pre><span></span><code><span class="k">import</span><span class="w"> </span><span class="nx">Anthropic</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s2">&quot;@anthropic-ai/sdk&quot;</span><span class="p">;</span>
+<span class="k">import</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="kr">as</span><span class="w"> </span><span class="nx">fs</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s2">&quot;fs&quot;</span><span class="p">;</span>
+<span class="k">import</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="kr">as</span><span class="w"> </span><span class="nx">path</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s2">&quot;path&quot;</span><span class="p">;</span>
+<span class="k">import</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="kr">as</span><span class="w"> </span><span class="nx">archiver</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s2">&quot;archiver&quot;</span><span class="p">;</span>
+
+<span class="kd">const</span><span class="w"> </span><span class="nx">client</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="ow">new</span><span class="w"> </span><span class="nx">Anthropic</span><span class="p">();</span>
+
+<span class="kd">const</span><span class="w"> </span><span class="nx">BETAS</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span>
+<span class="w">  </span><span class="s2">&quot;code-execution-2025-01-01&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="s2">&quot;skills-2025-01-01&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="s2">&quot;files-api-2025-04-14&quot;</span><span class="p">,</span>
+<span class="p">];</span>
+
+<span class="k">async</span><span class="w"> </span><span class="kd">function</span><span class="w"> </span><span class="nx">uploadSkill</span><span class="p">(</span><span class="nx">skillDir</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="p">,</span><span class="w"> </span><span class="nx">name</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="p">)</span><span class="o">:</span><span class="w"> </span><span class="nb">Promise</span><span class="o">&lt;</span><span class="kt">string</span><span class="o">&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="c1">// 打包</span>
+<span class="w">  </span><span class="kd">const</span><span class="w"> </span><span class="nx">zipPath</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="sb">`</span><span class="si">${</span><span class="nx">name</span><span class="si">}</span><span class="sb">.zip`</span><span class="p">;</span>
+<span class="w">  </span><span class="k">await</span><span class="w"> </span><span class="ow">new</span><span class="w"> </span><span class="nb">Promise</span><span class="o">&lt;</span><span class="ow">void</span><span class="o">&gt;</span><span class="p">((</span><span class="nx">resolve</span><span class="p">,</span><span class="w"> </span><span class="nx">reject</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kd">const</span><span class="w"> </span><span class="nx">output</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">fs</span><span class="p">.</span><span class="nx">createWriteStream</span><span class="p">(</span><span class="nx">zipPath</span><span class="p">);</span>
+<span class="w">    </span><span class="kd">const</span><span class="w"> </span><span class="nx">archive</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">archiver</span><span class="p">(</span><span class="s2">&quot;zip&quot;</span><span class="p">,</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">zlib</span><span class="o">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">level</span><span class="o">:</span><span class="w"> </span><span class="kt">9</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="p">});</span>
+<span class="w">    </span><span class="nx">output</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s2">&quot;close&quot;</span><span class="p">,</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="nx">resolve</span><span class="p">());</span>
+<span class="w">    </span><span class="nx">archive</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s2">&quot;error&quot;</span><span class="p">,</span><span class="w"> </span><span class="p">(</span><span class="nx">err</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="nx">reject</span><span class="p">(</span><span class="nx">err</span><span class="p">));</span>
+<span class="w">    </span><span class="nx">archive</span><span class="p">.</span><span class="nx">pipe</span><span class="p">(</span><span class="nx">output</span><span class="p">);</span>
+<span class="w">    </span><span class="nx">archive</span><span class="p">.</span><span class="nx">directory</span><span class="p">(</span><span class="nx">skillDir</span><span class="p">,</span><span class="w"> </span><span class="kc">false</span><span class="p">);</span>
+<span class="w">    </span><span class="nx">archive</span><span class="p">.</span><span class="nx">finalize</span><span class="p">();</span>
+<span class="w">  </span><span class="p">});</span>
+
+<span class="w">  </span><span class="c1">// 上传</span>
+<span class="w">  </span><span class="kd">const</span><span class="w"> </span><span class="nx">fileData</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">fs</span><span class="p">.</span><span class="nx">readFileSync</span><span class="p">(</span><span class="nx">zipPath</span><span class="p">);</span>
+<span class="w">  </span><span class="kd">const</span><span class="w"> </span><span class="nx">skill</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="nx">client</span><span class="p">.</span><span class="nx">beta</span><span class="p">.</span><span class="nx">skills</span><span class="p">.</span><span class="nx">create</span><span class="p">({</span>
+<span class="w">    </span><span class="nx">name</span><span class="p">,</span>
+<span class="w">    </span><span class="nx">skill_data</span><span class="o">:</span><span class="w"> </span><span class="kt">fileData</span><span class="w"> </span><span class="kr">as</span><span class="w"> </span><span class="nx">any</span><span class="p">,</span>
+<span class="w">    </span><span class="nx">betas</span><span class="o">:</span><span class="w"> </span><span class="kt">BETAS</span><span class="p">,</span>
+<span class="w">  </span><span class="p">});</span>
+
+<span class="w">  </span><span class="nx">fs</span><span class="p">.</span><span class="nx">unlinkSync</span><span class="p">(</span><span class="nx">zipPath</span><span class="p">);</span>
+<span class="w">  </span><span class="k">return</span><span class="w"> </span><span class="nx">skill</span><span class="p">.</span><span class="nx">id</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="k">async</span><span class="w"> </span><span class="kd">function</span><span class="w"> </span><span class="nx">processPdf</span><span class="p">(</span>
+<span class="w">  </span><span class="nx">skillId</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="p">,</span>
+<span class="w">  </span><span class="nx">pdfPath</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="p">,</span>
+<span class="w">  </span><span class="nx">fields</span><span class="o">:</span><span class="w"> </span><span class="kt">Record</span><span class="o">&lt;</span><span class="kt">string</span><span class="p">,</span><span class="w"> </span><span class="kt">string</span><span class="o">&gt;</span>
+<span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="c1">// 上传输入</span>
+<span class="w">  </span><span class="kd">const</span><span class="w"> </span><span class="nx">fileBuffer</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">fs</span><span class="p">.</span><span class="nx">readFileSync</span><span class="p">(</span><span class="nx">pdfPath</span><span class="p">);</span>
+<span class="w">  </span><span class="kd">const</span><span class="w"> </span><span class="nx">fileObj</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="nx">client</span><span class="p">.</span><span class="nx">beta</span><span class="p">.</span><span class="nx">files</span><span class="p">.</span><span class="nx">upload</span><span class="p">({</span>
+<span class="w">    </span><span class="nx">file</span><span class="o">:</span><span class="w"> </span><span class="kt">fileBuffer</span><span class="w"> </span><span class="kr">as</span><span class="w"> </span><span class="nx">any</span><span class="p">,</span>
+<span class="w">    </span><span class="nx">betas</span><span class="o">:</span><span class="w"> </span><span class="kt">BETAS</span><span class="p">,</span>
+<span class="w">  </span><span class="p">});</span>
+
+<span class="w">  </span><span class="c1">// 调用</span>
+<span class="w">  </span><span class="kd">const</span><span class="w"> </span><span class="nx">response</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="nx">client</span><span class="p">.</span><span class="nx">beta</span><span class="p">.</span><span class="nx">messages</span><span class="p">.</span><span class="nx">create</span><span class="p">({</span>
+<span class="w">    </span><span class="nx">model</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;claude-sonnet-4-5&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nx">max_tokens</span><span class="o">:</span><span class="w"> </span><span class="kt">4096</span><span class="p">,</span>
+<span class="w">    </span><span class="nx">betas</span><span class="o">:</span><span class="w"> </span><span class="kt">BETAS</span><span class="p">,</span>
+<span class="w">    </span><span class="nx">skills</span><span class="o">:</span><span class="w"> </span><span class="p">[{</span><span class="w"> </span><span class="kr">type</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;custom&quot;</span><span class="p">,</span><span class="w"> </span><span class="nx">skill_id</span><span class="o">:</span><span class="w"> </span><span class="kt">skillId</span><span class="p">,</span><span class="w"> </span><span class="nx">version</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;latest&quot;</span><span class="w"> </span><span class="p">}],</span>
+<span class="w">    </span><span class="nx">tools</span><span class="o">:</span><span class="w"> </span><span class="p">[{</span><span class="w"> </span><span class="kr">type</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;code_execution_20250101&quot;</span><span class="p">,</span><span class="w"> </span><span class="nx">name</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;code_execution&quot;</span><span class="w"> </span><span class="p">}],</span>
+<span class="w">    </span><span class="nx">messages</span><span class="o">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">      </span><span class="p">{</span>
+<span class="w">        </span><span class="nx">role</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;user&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="nx">content</span><span class="o">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">          </span><span class="p">{</span><span class="w"> </span><span class="kr">type</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;file&quot;</span><span class="p">,</span><span class="w"> </span><span class="nx">file</span><span class="o">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">file_id</span><span class="o">:</span><span class="w"> </span><span class="kt">fileObj.id</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="p">},</span>
+<span class="w">          </span><span class="p">{</span><span class="w"> </span><span class="kr">type</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;text&quot;</span><span class="p">,</span><span class="w"> </span><span class="nx">text</span><span class="o">:</span><span class="w"> </span><span class="sb">`填写表单，字段：</span><span class="si">${</span><span class="nb">JSON</span><span class="p">.</span><span class="nx">stringify</span><span class="p">(</span><span class="nx">fields</span><span class="p">)</span><span class="si">}</span><span class="sb">`</span><span class="w"> </span><span class="p">},</span>
+<span class="w">        </span><span class="p">],</span>
+<span class="w">      </span><span class="p">},</span>
+<span class="w">    </span><span class="p">],</span>
+<span class="w">  </span><span class="p">});</span>
+
+<span class="w">  </span><span class="c1">// 提取响应</span>
+<span class="w">  </span><span class="kd">let</span><span class="w"> </span><span class="nx">text</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="p">;</span>
+<span class="w">  </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kd">const</span><span class="w"> </span><span class="nx">block</span><span class="w"> </span><span class="k">of</span><span class="w"> </span><span class="nx">response</span><span class="p">.</span><span class="nx">content</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="s2">&quot;text&quot;</span><span class="w"> </span><span class="ow">in</span><span class="w"> </span><span class="nx">block</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="nx">text</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="nx">block</span><span class="p">.</span><span class="nx">text</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="w">  </span><span class="k">return</span><span class="w"> </span><span class="nx">text</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="c1">// 运行</span>
+<span class="p">(</span><span class="k">async</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="kd">const</span><span class="w"> </span><span class="nx">skillId</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="nx">uploadSkill</span><span class="p">(</span><span class="s2">&quot;./pdf-form-filler&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;PDF Filler&quot;</span><span class="p">);</span>
+<span class="w">  </span><span class="kd">const</span><span class="w"> </span><span class="nx">result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="nx">processPdf</span><span class="p">(</span><span class="nx">skillId</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;./sample.pdf&quot;</span><span class="p">,</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nx">name</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;张三&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="p">});</span>
+<span class="w">  </span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">result</span><span class="p">);</span>
+<span class="p">})();</span>
+</code></pre></div>
+
+<hr />
+<h2 id="55">5.5 流式响应</h2>
+<p>处理长任务时用流式（减少等待时间、显示进度）：</p>
+<div class="codehilite"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">stream_chat</span><span class="p">(</span><span class="n">skill_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">user_message</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+    <span class="k">with</span> <span class="n">client</span><span class="o">.</span><span class="n">beta</span><span class="o">.</span><span class="n">messages</span><span class="o">.</span><span class="n">stream</span><span class="p">(</span>
+        <span class="n">model</span><span class="o">=</span><span class="s2">&quot;claude-sonnet-4-5&quot;</span><span class="p">,</span>
+        <span class="n">max_tokens</span><span class="o">=</span><span class="mi">4096</span><span class="p">,</span>
+        <span class="n">betas</span><span class="o">=</span><span class="n">BETAS</span><span class="p">,</span>
+        <span class="n">skills</span><span class="o">=</span><span class="p">[{</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;custom&quot;</span><span class="p">,</span> <span class="s2">&quot;skill_id&quot;</span><span class="p">:</span> <span class="n">skill_id</span><span class="p">,</span> <span class="s2">&quot;version&quot;</span><span class="p">:</span> <span class="s2">&quot;latest&quot;</span><span class="p">}],</span>
+        <span class="n">tools</span><span class="o">=</span><span class="p">[{</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;code_execution_20250101&quot;</span><span class="p">,</span> <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;code_execution&quot;</span><span class="p">}],</span>
+        <span class="n">messages</span><span class="o">=</span><span class="p">[{</span><span class="s2">&quot;role&quot;</span><span class="p">:</span> <span class="s2">&quot;user&quot;</span><span class="p">,</span> <span class="s2">&quot;content&quot;</span><span class="p">:</span> <span class="n">user_message</span><span class="p">}]</span>
+    <span class="p">)</span> <span class="k">as</span> <span class="n">stream</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">text</span> <span class="ow">in</span> <span class="n">stream</span><span class="o">.</span><span class="n">text_stream</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">flush</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">()</span>
+</code></pre></div>
+
+<p><strong>事件类型</strong>（stream 的事件）：</p>
+<table>
+<thead>
+<tr>
+<th>事件</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>message_start</code></td>
+<td>消息开始</td>
+</tr>
+<tr>
+<td><code>content_block_start</code></td>
+<td>内容块开始（文本 / 工具调用）</td>
+</tr>
+<tr>
+<td><code>text</code></td>
+<td>增量文本</td>
+</tr>
+<tr>
+<td><code>input_json</code></td>
+<td>工具调用的增量参数</td>
+</tr>
+<tr>
+<td><code>content_block_stop</code></td>
+<td>内容块结束</td>
+</tr>
+<tr>
+<td><code>message_delta</code></td>
+<td>消息级元数据更新</td>
+</tr>
+<tr>
+<td><code>message_stop</code></td>
+<td>消息结束</td>
+</tr>
+</tbody>
+</table>
+<p>TypeScript 流式：</p>
+<div class="codehilite"><pre><span></span><code><span class="kd">const</span><span class="w"> </span><span class="nx">stream</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">client</span><span class="p">.</span><span class="nx">beta</span><span class="p">.</span><span class="nx">messages</span><span class="p">.</span><span class="nx">stream</span><span class="p">({</span>
+<span class="w">  </span><span class="c1">// ... 参数同上</span>
+<span class="p">});</span>
+
+<span class="nx">stream</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s2">&quot;text&quot;</span><span class="p">,</span><span class="w"> </span><span class="p">(</span><span class="nx">text</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="nx">process</span><span class="p">.</span><span class="nx">stdout</span><span class="p">.</span><span class="nx">write</span><span class="p">(</span><span class="nx">text</span><span class="p">));</span>
+<span class="nx">stream</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s2">&quot;error&quot;</span><span class="p">,</span><span class="w"> </span><span class="p">(</span><span class="nx">err</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="nx">console</span><span class="p">.</span><span class="nx">error</span><span class="p">(</span><span class="nx">err</span><span class="p">));</span>
+<span class="nx">stream</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s2">&quot;end&quot;</span><span class="p">,</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;\n[done]&quot;</span><span class="p">));</span>
+
+<span class="k">await</span><span class="w"> </span><span class="nx">stream</span><span class="p">.</span><span class="nx">done</span><span class="p">();</span>
+</code></pre></div>
+
+<hr />
+<h2 id="56">5.6 错误处理与重试</h2>
+<div class="codehilite"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">time</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">anthropic</span><span class="w"> </span><span class="kn">import</span> <span class="n">APIError</span><span class="p">,</span> <span class="n">APIConnectionError</span><span class="p">,</span> <span class="n">RateLimitError</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">safe_chat</span><span class="p">(</span><span class="n">skill_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">message</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">max_retries</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">3</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">attempt</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">max_retries</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">chat_with_skill</span><span class="p">(</span><span class="n">skill_id</span><span class="p">,</span> <span class="n">message</span><span class="p">)</span>
+        <span class="k">except</span> <span class="n">RateLimitError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">attempt</span> <span class="o">&lt;</span> <span class="n">max_retries</span> <span class="o">-</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">wait</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">**</span> <span class="n">attempt</span>  <span class="c1"># 指数退避</span>
+                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;⏳ Rate limited, retry in </span><span class="si">{</span><span class="n">wait</span><span class="si">}</span><span class="s2">s...&quot;</span><span class="p">)</span>
+                <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="n">wait</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span>
+        <span class="k">except</span> <span class="n">APIConnectionError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;⚠️ Connection error: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">attempt</span> <span class="o">&lt;</span> <span class="n">max_retries</span> <span class="o">-</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span>
+        <span class="k">except</span> <span class="n">APIError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;⚠️ API error </span><span class="si">{</span><span class="n">e</span><span class="o">.</span><span class="n">status_code</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">e</span><span class="o">.</span><span class="n">message</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">raise</span>  <span class="c1"># 业务错误不重试</span>
+</code></pre></div>
+
+<p><strong>常见错误</strong>：</p>
+<table>
+<thead>
+<tr>
+<th>错误码</th>
+<th>含义</th>
+<th>处理</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>400</td>
+<td>请求格式错误</td>
+<td>检查 skill_id、beta 头、必填字段</td>
+</tr>
+<tr>
+<td>401</td>
+<td>API key 无效</td>
+<td>检查环境变量</td>
+</tr>
+<tr>
+<td>403</td>
+<td>权限不足</td>
+<td>申请相应 beta 权限</td>
+</tr>
+<tr>
+<td>404</td>
+<td>skill_id 不存在</td>
+<td>重新上传</td>
+</tr>
+<tr>
+<td>429</td>
+<td>速率限制</td>
+<td>退避重试</td>
+</tr>
+<tr>
+<td>500</td>
+<td>服务端错误</td>
+<td>重试</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="57">5.7 成本与性能考虑</h2>
+<h3 id="571">5.7.1 成本模型</h3>
+<p>Skill 加载会增加 token 消耗：</p>
+<table>
+<thead>
+<tr>
+<th>阶段</th>
+<th>增量 token</th>
+<th>是否必付</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>L1 元数据</td>
+<td>~100-200 / skill</td>
+<td><strong>常驻</strong>（多个 skill 累加）</td>
+</tr>
+<tr>
+<td>L2 主体</td>
+<td>~1,500-3,000</td>
+<td>触发时付一次</td>
+</tr>
+<tr>
+<td>L3 资源</td>
+<td>~500-2,000 / 文件</td>
+<td>按需</td>
+</tr>
+<tr>
+<td>Code Execution</td>
+<td>工具调用元数据</td>
+<td>每次调用</td>
+</tr>
+<tr>
+<td>文件下载/上传</td>
+<td>文件大小相关</td>
+<td>按需</td>
+</tr>
+</tbody>
+</table>
+<p><strong>优化</strong>：<br />
+- 减少 L1 的 skill 数量（精简到必要的）<br />
+- 用 <code>disable-model-invocation</code> 排除不自动触发的 skill<br />
+- Code Execution 用 Haiku 模型（如果 skill 不复杂）</p>
+<h3 id="572">5.7.2 模型选择</h3>
+<table>
+<thead>
+<tr>
+<th>Skill 类型</th>
+<th>推荐模型</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>简单规则执行（PDF 填表）</td>
+<td>Sonnet</td>
+</tr>
+<tr>
+<td>复杂分析（代码审查）</td>
+<td>Opus</td>
+</tr>
+<tr>
+<td>大批量处理</td>
+<td>Sonnet</td>
+</tr>
+<tr>
+<td>思考密集型</td>
+<td>Opus</td>
+</tr>
+<tr>
+<td>节省成本</td>
+<td>Haiku（仅最简单场景）</td>
+</tr>
+</tbody>
+</table>
+<h3 id="573">5.7.3 性能优化</h3>
+<ul>
+<li><strong>复用 skill_id</strong>：skill 是 immutable，上传一次反复用</li>
+<li><strong>预热</strong>：批量任务前先空跑一次</li>
+<li><strong>并发请求</strong>：不同任务用不同 skill_id 并发调用</li>
+<li><strong>缓存文件 ID</strong>：同一文件多次任务可复用 file_id</li>
+</ul>
+<hr />
+<h2 id="58">5.8 常见集成模式</h2>
+<h3 id="1cicd">模式 1：CI/CD 中的代码审查</h3>
+<div class="codehilite"><pre><span></span><code><span class="c1"># 在 PR 流水线里</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">review_pr</span><span class="p">(</span><span class="n">repo</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">pr_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
+    <span class="n">diff</span> <span class="o">=</span> <span class="n">get_pr_diff</span><span class="p">(</span><span class="n">repo</span><span class="p">,</span> <span class="n">pr_id</span><span class="p">)</span>
+    <span class="n">response</span> <span class="o">=</span> <span class="n">chat_with_skill</span><span class="p">(</span>
+        <span class="n">skill_id</span><span class="o">=</span><span class="n">CODE_REVIEW_SKILL_ID</span><span class="p">,</span>
+        <span class="n">user_message</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;审查这个 PR 的 diff：</span><span class="se">\n</span><span class="si">{</span><span class="n">diff</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="p">)</span>
+    <span class="n">post_comment</span><span class="p">(</span><span class="n">repo</span><span class="p">,</span> <span class="n">pr_id</span><span class="p">,</span> <span class="n">response</span><span class="p">)</span>
+</code></pre></div>
+
+<h3 id="2">模式 2：客服机器人</h3>
+<div class="codehilite"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">handle_user_message</span><span class="p">(</span><span class="n">user_msg</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">context</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
+    <span class="n">response</span> <span class="o">=</span> <span class="n">chat_with_skill</span><span class="p">(</span>
+        <span class="n">skill_id</span><span class="o">=</span><span class="n">CUSTOMER_SERVICE_SKILL_ID</span><span class="p">,</span>
+        <span class="n">user_message</span><span class="o">=</span><span class="n">user_msg</span><span class="p">,</span>
+        <span class="n">upload_files</span><span class="o">=</span><span class="p">[</span><span class="n">context</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;attachment&quot;</span><span class="p">)]</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="n">response</span>
+</code></pre></div>
+
+<h3 id="3">模式 3：文档批量处理</h3>
+<div class="codehilite"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">batch_process_pdfs</span><span class="p">(</span><span class="n">pdf_paths</span><span class="p">:</span> <span class="nb">list</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">path</span> <span class="ow">in</span> <span class="n">pdf_paths</span><span class="p">:</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">process_pdf</span><span class="p">(</span><span class="n">SKILL_ID</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">FIELDS</span><span class="p">)</span>
+        <span class="n">save_result</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">result</span><span class="p">)</span>
+</code></pre></div>
+
+<h3 id="4">模式 4：内部工具集成</h3>
+<div class="codehilite"><pre><span></span><code><span class="c1"># FastAPI endpoint</span>
+<span class="nd">@app</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="s2">&quot;/api/fill-pdf&quot;</span><span class="p">)</span>
+<span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">fill_pdf_endpoint</span><span class="p">(</span><span class="n">file</span><span class="p">:</span> <span class="n">UploadFile</span><span class="p">,</span> <span class="n">fields</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
+    <span class="c1"># 保存上传文件</span>
+    <span class="n">tmp_path</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;/tmp/</span><span class="si">{</span><span class="n">file</span><span class="o">.</span><span class="n">filename</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">tmp_path</span><span class="p">,</span> <span class="s2">&quot;wb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="k">await</span> <span class="n">file</span><span class="o">.</span><span class="n">read</span><span class="p">())</span>
+
+    <span class="c1"># 处理</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="n">process_pdf</span><span class="p">(</span><span class="n">SKILL_ID</span><span class="p">,</span> <span class="n">tmp_path</span><span class="p">,</span> <span class="n">fields</span><span class="p">)</span>
+
+    <span class="c1"># 返回结果</span>
+    <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;result&quot;</span><span class="p">:</span> <span class="n">result</span><span class="p">}</span>
+</code></pre></div>
+
+<hr />
+<h2 id="59-anthropic-skill">5.9 Anthropic 内置 Skill</h2>
+<p>除了自定义 skill，Anthropic 还提供<strong>官方内置</strong>的 skill：</p>
+<table>
+<thead>
+<tr>
+<th>Skill</th>
+<th>能力</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Excel</td>
+<td>创建带公式的电子表格</td>
+</tr>
+<tr>
+<td>PowerPoint</td>
+<td>生成演示文稿</td>
+</tr>
+<tr>
+<td>Word</td>
+<td>创建 Word 文档</td>
+</tr>
+<tr>
+<td>PDF</td>
+<td>填写 PDF 表单</td>
+</tr>
+</tbody>
+</table>
+<p><strong>使用方式</strong>：</p>
+<div class="codehilite"><pre><span></span><code><span class="n">response</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">beta</span><span class="o">.</span><span class="n">messages</span><span class="o">.</span><span class="n">create</span><span class="p">(</span>
+    <span class="n">model</span><span class="o">=</span><span class="s2">&quot;claude-sonnet-4-5&quot;</span><span class="p">,</span>
+    <span class="n">max_tokens</span><span class="o">=</span><span class="mi">4096</span><span class="p">,</span>
+    <span class="n">betas</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;code-execution-2025-01-01&quot;</span><span class="p">,</span> <span class="s2">&quot;skills-2025-01-01&quot;</span><span class="p">],</span>
+    <span class="n">skills</span><span class="o">=</span><span class="p">[</span>
+        <span class="p">{</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;anthropic&quot;</span><span class="p">,</span> <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;pdf&quot;</span><span class="p">}</span>  <span class="c1"># 用官方内置</span>
+    <span class="p">],</span>
+    <span class="n">tools</span><span class="o">=</span><span class="p">[{</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;code_execution_20250101&quot;</span><span class="p">,</span> <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;code_execution&quot;</span><span class="p">}],</span>
+    <span class="n">messages</span><span class="o">=</span><span class="p">[</span><span class="o">...</span><span class="p">]</span>
+<span class="p">)</span>
+</code></pre></div>
+
+<p><strong>注意</strong>：内置 skill 的 <code>type</code> 是 <code>"anthropic"</code>，自定义是 <code>"custom"</code>。</p>
+<hr />
+<h2 id="510">5.10 接下来</h2>
+<ul>
+<li>想看 Skill 体系怎么设计（多 skill、版本、监控）→ <a href="./06-design.html">第 6 章 · 体系设计</a></li>
+<li>想了解 Cursor / Claude.ai / Trae / Minimax Code 各自的 skill 体系 → <a href="./07-ecosystem.html">第 7 章 · 生态对照</a></li>
+<li>触发不准或加载失败想排查 → <a href="./08-debug.html">第 8 章 · 调试与反模式</a></li>
+</ul>
+    </article>
+</div>
+
+<a href="#" class="back-to-top" id="backToTop" title="返回顶部">↑</a>
+
+<footer>
+    <p>learn-skills · 基于 Anthropic Agent Skills 官方文档整理 · 2026-06</p>
+    <p>Skill 机制持续演进，请以 <a href="https://docs.claude.com/en/docs/agents-and-tools/agent-skills/overview">官方文档</a> 为准</p>
+</footer>
+
+<script>
+// 滚动出现"返回顶部"按钮
+const backBtn = document.getElementById('backToTop');
+window.addEventListener('scroll', () => {
+    backBtn.classList.toggle('visible', window.scrollY > 400);
+});
+backBtn.addEventListener('click', e => {
+    e.preventDefault();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+});
+
+// 当前滚动位置高亮 TOC
+const tocLinks = document.querySelectorAll('.toc a');
+const headings = Array.from(tocLinks).map(a => document.getElementById(a.getAttribute('href').slice(1)));
+if (headings.length > 0) {
+    window.addEventListener('scroll', () => {
+        const offset = 100;
+        let activeIdx = 0;
+        for (let i = 0; i < headings.length; i++) {
+            if (headings[i] && headings[i].offsetTop - offset < window.scrollY) {
+                activeIdx = i;
+            }
+        }
+        tocLinks.forEach((a, i) => {
+            a.classList.toggle('active', i === activeIdx);
+        });
+    });
+}
+</script>
+</body>
+</html>

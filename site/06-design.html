@@ -1,0 +1,1148 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>第 6 章 · 体系设计：多 Skill 架构、版本管理、与 MCP 协同 · learn-skills</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/[email protected]/styles/github-dark.min.css">
+<style>
+:root {
+    --bg: #0d1117;
+    --panel: #161b22;
+    --border: #30363d;
+    --text: #e6edf3;
+    --muted: #8b949e;
+    --accent: #f0883e;
+    --accent-2: #58a6ff;
+    --link: #58a6ff;
+    --code-bg: #161b22;
+}
+* { box-sizing: border-box; }
+html, body {
+    margin: 0;
+    padding: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+    line-height: 1.7;
+    font-size: 16px;
+}
+
+/* 顶部导航 */
+header.nav {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: rgba(13, 17, 23, 0.95);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--border);
+    padding: 12px 0;
+}
+.nav-container {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 0 24px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+.nav-brand {
+    font-weight: 700;
+    font-size: 1.05rem;
+    color: var(--accent);
+    text-decoration: none;
+    margin-right: 16px;
+}
+.nav-brand:hover { color: var(--text); }
+.nav-link {
+    color: var(--muted);
+    text-decoration: none;
+    font-size: 0.88rem;
+    padding: 4px 10px;
+    border-radius: 6px;
+    transition: all 0.15s;
+    white-space: nowrap;
+}
+.nav-link:hover {
+    color: var(--text);
+    background: var(--panel);
+}
+.nav-link.active {
+    color: var(--accent);
+    background: rgba(240, 136, 62, 0.1);
+    border: 1px solid rgba(240, 136, 62, 0.3);
+}
+.nav-spacer { flex: 1; }
+.nav-extra {
+    color: var(--muted);
+    font-size: 0.8rem;
+    padding: 4px 8px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+}
+
+/* 主体布局 */
+.layout {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 32px 24px;
+    display: grid;
+    grid-template-columns: 220px 1fr;
+    gap: 32px;
+}
+@media (max-width: 900px) {
+    .layout { grid-template-columns: 1fr; }
+    aside.toc { display: none; }
+}
+
+/* TOC */
+aside.toc {
+    position: sticky;
+    top: 70px;
+    max-height: calc(100vh - 90px);
+    overflow-y: auto;
+    font-size: 0.85rem;
+}
+.toc-title {
+    color: var(--muted);
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 12px;
+}
+.toc ul {
+    list-style: none;
+    padding-left: 0;
+    margin: 0;
+}
+.toc ul ul {
+    padding-left: 16px;
+    border-left: 1px solid var(--border);
+    margin-top: 4px;
+}
+.toc li { margin: 4px 0; }
+.toc a {
+    color: var(--muted);
+    text-decoration: none;
+    display: block;
+    padding: 3px 8px;
+    border-radius: 4px;
+    transition: all 0.15s;
+}
+.toc a:hover {
+    color: var(--accent-2);
+    background: var(--panel);
+}
+.toc a.active {
+    color: var(--accent);
+    background: rgba(240, 136, 62, 0.08);
+}
+
+/* 内容 */
+article {
+    min-width: 0;
+    max-width: 920px;
+}
+article h1 {
+    font-size: 2.2rem;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 12px;
+    margin-top: 0;
+    margin-bottom: 24px;
+    color: var(--text);
+    letter-spacing: -0.02em;
+}
+article h2 {
+    font-size: 1.55rem;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 8px;
+    margin-top: 40px;
+    color: var(--text);
+}
+article h3 {
+    font-size: 1.2rem;
+    color: var(--text);
+    margin-top: 28px;
+}
+article h4 {
+    font-size: 1rem;
+    color: var(--accent-2);
+    margin-top: 20px;
+}
+article p { margin: 12px 0; }
+article a {
+    color: var(--link);
+    text-decoration: none;
+    border-bottom: 1px dashed transparent;
+}
+article a:hover {
+    border-bottom-color: var(--link);
+}
+article a.example-link {
+    color: var(--muted);
+    border-bottom: 1px dashed var(--muted);
+    font-style: italic;
+}
+article ul, article ol { padding-left: 28px; }
+article li { margin: 4px 0; }
+article hr {
+    border: 0;
+    border-top: 1px solid var(--border);
+    margin: 32px 0;
+}
+article blockquote {
+    margin: 16px 0;
+    padding: 8px 16px;
+    border-left: 4px solid var(--accent);
+    background: rgba(240, 136, 62, 0.06);
+    color: var(--muted);
+    border-radius: 0 6px 6px 0;
+}
+article blockquote p { margin: 4px 0; }
+article strong { color: var(--text); }
+article em { color: var(--accent); font-style: normal; }
+
+/* 标题锚点 */
+article h1, article h2, article h3, article h4 {
+    position: relative;
+}
+article h1:hover .headerlink,
+article h2:hover .headerlink,
+article h3:hover .headerlink,
+article h4:hover .headerlink {
+    opacity: 1;
+}
+.headerlink {
+    position: absolute;
+    left: -24px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--muted);
+    text-decoration: none;
+    opacity: 0;
+    font-weight: 400;
+    transition: opacity 0.15s;
+}
+.headerlink:hover { color: var(--accent); }
+
+/* 表格 */
+article table {
+    border-collapse: collapse;
+    width: 100%;
+    margin: 16px 0;
+    font-size: 0.92rem;
+}
+article th, article td {
+    border: 1px solid var(--border);
+    padding: 8px 14px;
+    text-align: left;
+}
+article th {
+    background: var(--panel);
+    color: var(--accent-2);
+    font-weight: 600;
+}
+article tr:nth-child(even) td { background: rgba(255,255,255,0.02); }
+
+/* 代码 */
+article code {
+    background: rgba(110, 118, 129, 0.2);
+    color: #ff7b72;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 0.88em;
+    font-family: "JetBrains Mono", "Cascadia Code", Consolas, monospace;
+}
+article pre {
+    background: #161b22 !important;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 14px 16px;
+    overflow-x: auto;
+    font-size: 0.86rem;
+    line-height: 1.5;
+    margin: 14px 0;
+}
+article pre code {
+    background: none;
+    color: inherit;
+    padding: 0;
+    font-size: inherit;
+}
+
+/* 任务列表 */
+article input[type="checkbox"] { margin-right: 6px; }
+
+/* 底部 */
+footer {
+    max-width: 1280px;
+    margin: 60px auto 0;
+    padding: 24px;
+    border-top: 1px solid var(--border);
+    color: var(--muted);
+    font-size: 0.85rem;
+    text-align: center;
+}
+footer a { color: var(--accent-2); text-decoration: none; }
+
+/* 章节元信息 */
+.chapter-meta {
+    color: var(--muted);
+    font-size: 0.9rem;
+    margin-bottom: 32px;
+    display: flex;
+    gap: 16px;
+    align-items: center;
+}
+.chapter-meta .tag {
+    background: rgba(240, 136, 62, 0.12);
+    color: var(--accent);
+    padding: 3px 10px;
+    border-radius: 999px;
+    font-size: 0.78rem;
+    font-weight: 600;
+}
+
+/* 返回顶部 */
+.back-to-top {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    width: 40px;
+    height: 40px;
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 50%;
+    color: var(--muted);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    transition: all 0.2s;
+    z-index: 50;
+}
+.back-to-top.visible {
+    display: flex;
+}
+.back-to-top:hover {
+    color: var(--accent);
+    border-color: var(--accent);
+}
+</style>
+</head>
+<body>
+
+<header class="nav">
+    <div class="nav-container">
+        <a href="index.html" class="nav-brand">learn-skills</a>
+        <a href="01-concept.html" class="nav-link">01. 概念入门</a>
+        <a href="02-anatomy.html" class="nav-link">02. 文件解剖</a>
+        <a href="03-loading.html" class="nav-link">03. 加载机制</a>
+        <a href="04-writing.html" class="nav-link">04. 实战编写</a>
+        <a href="05-api.html" class="nav-link">05. API 集成</a>
+        <a href="06-design.html" class="nav-link active">06. 体系设计</a>
+        <a href="07-ecosystem.html" class="nav-link">07. 生态对照</a>
+        <a href="08-debug.html" class="nav-link">08. 调试与反模式</a>
+        <div class="nav-spacer"></div>
+        <a href="index.html" class="nav-extra">总览</a>
+    </div>
+</header>
+
+<div class="layout">
+    <aside class="toc">
+        <div class="toc-title">本页目录</div>
+        <p style='color: var(--muted); font-size: 0.8rem;'>无章节</p>
+    </aside>
+    <article>
+        <div class="chapter-meta">
+            <span class="tag">第 6 章 · 体系设计</span>
+            <span>30 min · 架构</span>
+        </div>
+        <h1 id="6-skill-mcp">第 6 章 · 体系设计：多 Skill 架构、版本管理、与 MCP 协同</h1>
+<blockquote>
+<p>读完这一章你应该能：① 设计一个<strong>企业级</strong>的 skill 体系；② 解决多 skill 冲突、命名空间、版本管理问题；③ 理解 skill / MCP / sub-agent 怎么协同；④ 监控 skill 体系的健康度。</p>
+</blockquote>
+<hr />
+<h2 id="61">6.1 为什么需要"体系设计"</h2>
+<p>单 skill 简单，<strong>多 skill 协作</strong>才是工程化。</p>
+<p>真实场景中你会遇到：</p>
+<table>
+<thead>
+<tr>
+<th>问题</th>
+<th>表现</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>数量爆炸</strong></td>
+<td>团队 50 个 skill，常驻 token 占满</td>
+</tr>
+<tr>
+<td><strong>职责重叠</strong></td>
+<td>两个 skill 都"审查代码"，触发混乱</td>
+</tr>
+<tr>
+<td><strong>命名冲突</strong></td>
+<td>个人和项目同名 skill，谁优先？</td>
+</tr>
+<tr>
+<td><strong>版本错乱</strong></td>
+<td>A 用 v1、B 用 v2，行为不一致</td>
+</tr>
+<tr>
+<td><strong>加载失败</strong></td>
+<td>一个 skill 写错，Claude 不响应</td>
+</tr>
+<tr>
+<td><strong>可观测性</strong></td>
+<td>不知道哪些 skill 经常触发、哪些从不触发</td>
+</tr>
+<tr>
+<td><strong>安全审计</strong></td>
+<td>谁装的 skill？skill 里有恶意脚本？</td>
+</tr>
+</tbody>
+</table>
+<p><strong>体系设计</strong> = 解决这些问题的工程方法。</p>
+<hr />
+<h2 id="62">6.2 命名空间与作用域设计</h2>
+<h3 id="621">6.2.1 四级作用域（按优先级）</h3>
+<div class="codehilite"><pre><span></span><code>企业（最高）&gt; 个人 &gt; 项目 &gt; 插件（最低）
+</code></pre></div>
+
+<ul>
+<li><strong>企业级</strong>：通过 Managed Settings 部署，组织全员可见</li>
+<li><strong>个人级</strong>：<code>~/.claude/skills/</code>（Mac/Linux）或 <code>%USERPROFILE%\.claude\skills\</code>（Windows）</li>
+<li><strong>项目级</strong>：<code>.claude/skills/</code>，可 git 追踪，团队共享</li>
+<li><strong>插件级</strong>：<code>&lt;plugin&gt;/skills/</code>，命名空间隔离 <code>plugin-name:skill-name</code></li>
+</ul>
+<h3 id="622">6.2.2 命名约定</h3>
+<p><strong>原则</strong>：避免冲突、含义清晰、易搜索</p>
+<div class="codehilite"><pre><span></span><code># ❌ 不推荐
+my-skill
+test
+new
+skill1
+
+# ✅ 推荐：领域-功能-版本（可选）
+data-pipeline-etl
+api-doc-generator
+react-component-review
+security-vuln-scanner
+pdf-form-filler-v2   # 版本用单独字段管
+</code></pre></div>
+
+<p><strong>命名规则</strong>：<br />
+- 小写字母 + 数字 + 连字符<br />
+- 避免下划线、点、空格<br />
+- 长度 ≤ 64 字符<br />
+- 体现<strong>领域</strong>（pdf、api、data、test、deploy）+ <strong>功能</strong>（form-filler、review、generator）</p>
+<h3 id="623">6.2.3 命名空间隔离</h3>
+<p>当多个 skill 名字相同时：<br />
+- <strong>企业</strong> &gt; <strong>个人</strong> &gt; <strong>项目</strong> &gt; <strong>插件</strong><br />
+- 插件用 <code>&lt;plugin-name&gt;:&lt;skill-name&gt;</code> 避免冲突<br />
+- <strong>不建议</strong>依赖优先级掩盖冲突——应该<strong>改名</strong>或<strong>合并</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="c1"># 插件内的 skill 引用</span>
+<span class="nn">---</span>
+<span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">review</span>
+<span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">...</span>
+<span class="nn">---</span>
+<span class="c1"># 通过 plugin:review 引用</span>
+</code></pre></div>
+
+<hr />
+<h2 id="63-skill">6.3 多 Skill 协同模式</h2>
+<h3 id="631">6.3.1 串行：链式触发</h3>
+<p><strong>场景</strong>：A skill 输出 → B skill 接着处理</p>
+<div class="codehilite"><pre><span></span><code>用户问 → [skill-A: 数据分析] → 结果
+                    ↓
+           [skill-B: 生成报告] → 最终输出
+</code></pre></div>
+
+<p><strong>实现方式</strong>：</p>
+<ul>
+<li>显式：A skill 主体里写"完成 X 后调用 /skill-B"</li>
+<li>隐式：Claude 自动判断下一步用哪个 skill</li>
+</ul>
+<p><strong>示例</strong>：</p>
+<div class="codehilite"><pre><span></span><code><span class="c1"># skill-A: data-analyzer</span>
+<span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">分析 CSV/JSON 数据，输出统计结果</span>
+<span class="nt">when_to_use</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">当用户提供数据文件希望分析时</span>
+
+<span class="c1"># skill-B: report-generator</span>
+<span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">把分析结果生成 PDF/HTML 报告</span>
+<span class="nt">when_to_use</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">当有结构化分析结果希望输出报告时</span>
+</code></pre></div>
+
+<p>用户："分析这份数据并生成报告"<br />
+→ data-analyzer 触发 → 输出 JSON<br />
+→ report-generator 接着触发 → 输出 PDF</p>
+<h3 id="632-skill">6.3.2 并行：多 skill 独立</h3>
+<p><strong>场景</strong>：多 skill 同时处理一个任务的不同方面</p>
+<div class="codehilite"><pre><span></span><code>用户问 → Claude 同时触发：
+       ├─ [skill-A: 安全审查]
+       ├─ [skill-B: 性能审查]
+       └─ [skill-C: 风格审查]
+                    ↓
+           Claude 整合结果
+</code></pre></div>
+
+<p><strong>实现方式</strong>：Claude 内部决策，一次加载多个 skill 主体</p>
+<p><strong>注意</strong>：<br />
+- <strong>不</strong>适合"互相依赖"的 skill（应该串行）<br />
+- 适合"独立可并行"的检查项<br />
+- 注意 token 占用（5 个 skill 同时加载 = 5 × 3K = 15K）</p>
+<h3 id="633">6.3.3 分层：基础 + 扩展</h3>
+<p><strong>场景</strong>：一个"基础 skill"做通用事，多个"扩展 skill"做专门事</p>
+<div class="codehilite"><pre><span></span><code>base-skill: code-review-base
+  - 通用审查流程
+  - 调用者：所有 review 类 skill
+
+ext-skill: code-review-security (继承自 base)
+ext-skill: code-review-performance (继承自 base)
+ext-skill: code-review-style (继承自 base)
+</code></pre></div>
+
+<p><strong>实现方式</strong>：在子 skill 主体里明确引用 base</p>
+<div class="codehilite"><pre><span></span><code><span class="c1"># code-review-security</span>
+<span class="nn">---</span>
+<span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">code-review-security</span>
+<span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">专注安全维度的代码审查（SQL 注入、XSS、SSRF）</span>
+<span class="nt">when_to_use</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">当用户特别要求&quot;安全审查&quot;时</span>
+<span class="nn">---</span>
+
+<span class="c1"># Code Review — Security</span>
+
+<span class="c1">## 前置</span>
+
+<span class="l l-Scalar l-Scalar-Plain">先按 `code-review-base` 的流程收集变更。</span>
+
+<span class="l l-Scalar l-Scalar-Plain">## 重点检查</span>
+
+<span class="l l-Scalar l-Scalar-Plain">只关注安全问题（详见 references/security-checklist.md）：</span>
+
+<span class="l l-Scalar l-Scalar-Plain">1. 注入类漏洞</span>
+<span class="l l-Scalar l-Scalar-Plain">2. 敏感数据</span>
+<span class="l l-Scalar l-Scalar-Plain">3. 加密认证</span>
+<span class="l l-Scalar l-Scalar-Plain">4. ...</span>
+
+<span class="l l-Scalar l-Scalar-Plain">## 输出</span>
+
+<span class="l l-Scalar l-Scalar-Plain">只输出 🔴 严重问题（安全相关），其他维度不输出。</span>
+</code></pre></div>
+
+<h3 id="634">6.3.4 互斥：避免同时触发</h3>
+<p><strong>场景</strong>：两个 skill 职责不重叠，但用户输入可能模糊</p>
+<div class="codehilite"><pre><span></span><code>A skill: doc-writer (写文档)
+B skill: doc-reader (读文档)
+</code></pre></div>
+
+<p><strong>问题</strong>：用户说"看一下这个文档"——Claude 该用 reader 还是 writer？</p>
+<p><strong>解决方案</strong>：</p>
+<div class="codehilite"><pre><span></span><code><span class="c1"># doc-writer</span>
+<span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">|</span>
+<span class="w">  </span><span class="no">创建新文档（从模板生成 Word / Markdown / HTML）。</span>
+<span class="w">  </span><span class="no">当用户说&quot;写文档&quot;、&quot;生成报告&quot;、&quot;创建 README&quot;时使用。</span>
+<span class="w">  </span><span class="no">不要用于：阅读 / 总结现有文档（用 doc-reader）。</span>
+
+<span class="c1"># doc-reader</span>
+<span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">|</span>
+<span class="w">  </span><span class="no">阅读并总结现有文档。</span>
+<span class="w">  </span><span class="no">当用户说&quot;看看这个文档&quot;、&quot;总结 PDF&quot;、&quot;读一下 README&quot;时使用。</span>
+<span class="w">  </span><span class="no">不要用于：创建新文档（用 doc-writer）。</span>
+</code></pre></div>
+
+<p><strong>互斥规则</strong>：<br />
+- 在 description 里<strong>显式</strong>说明"不用于 X"<br />
+- 用 when_to_use 加强区分<br />
+- 实在分不清就让用户选</p>
+<hr />
+<h2 id="64">6.4 版本管理</h2>
+<h3 id="641">6.4.1 版本化的必要性</h3>
+<p><strong>场景</strong>：一个 skill 在生产中用着好好的，你想加个新功能</p>
+<ul>
+<li><strong>直接改 SKILL.md</strong> → 所有用户立刻拿到新版本</li>
+<li><strong>风险</strong>：新版本有 bug → 全员影响</li>
+<li><strong>解决</strong>：版本化</li>
+</ul>
+<h3 id="642-anthropic-skills-api">6.4.2 Anthropic Skills API 的版本管理</h3>
+<div class="codehilite"><pre><span></span><code><span class="c1"># 第一次上传</span>
+<span class="n">skill_v1</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">beta</span><span class="o">.</span><span class="n">skills</span><span class="o">.</span><span class="n">create</span><span class="p">(</span>
+    <span class="n">name</span><span class="o">=</span><span class="s2">&quot;pdf-form-filler&quot;</span><span class="p">,</span>
+    <span class="n">skill_data</span><span class="o">=</span><span class="nb">open</span><span class="p">(</span><span class="s2">&quot;v1.zip&quot;</span><span class="p">,</span> <span class="s2">&quot;rb&quot;</span><span class="p">),</span>
+    <span class="n">betas</span><span class="o">=</span><span class="n">BETAS</span>
+<span class="p">)</span>
+<span class="c1"># → skill_id, version=1</span>
+
+<span class="c1"># 改了之后第二次上传</span>
+<span class="n">skill_v2</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">beta</span><span class="o">.</span><span class="n">skills</span><span class="o">.</span><span class="n">create</span><span class="p">(</span>
+    <span class="n">name</span><span class="o">=</span><span class="s2">&quot;pdf-form-filler&quot;</span><span class="p">,</span>
+    <span class="n">skill_data</span><span class="o">=</span><span class="nb">open</span><span class="p">(</span><span class="s2">&quot;v2.zip&quot;</span><span class="p">,</span> <span class="s2">&quot;rb&quot;</span><span class="p">),</span>
+    <span class="n">betas</span><span class="o">=</span><span class="n">BETAS</span>
+<span class="p">)</span>
+<span class="c1"># → 同 skill_id, version=2</span>
+</code></pre></div>
+
+<p><strong>调用时指定版本</strong>：</p>
+<div class="codehilite"><pre><span></span><code><span class="c1"># 用最新版</span>
+<span class="p">{</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;custom&quot;</span><span class="p">,</span> <span class="s2">&quot;skill_id&quot;</span><span class="p">:</span> <span class="n">skill_id</span><span class="p">,</span> <span class="s2">&quot;version&quot;</span><span class="p">:</span> <span class="s2">&quot;latest&quot;</span><span class="p">}</span>
+
+<span class="c1"># 用指定版</span>
+<span class="p">{</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;custom&quot;</span><span class="p">,</span> <span class="s2">&quot;skill_id&quot;</span><span class="p">:</span> <span class="n">skill_id</span><span class="p">,</span> <span class="s2">&quot;version&quot;</span><span class="p">:</span> <span class="s2">&quot;2&quot;</span><span class="p">}</span>
+</code></pre></div>
+
+<h3 id="643">6.4.3 客户端的版本策略</h3>
+<p><strong>Claude Code / Claude.ai</strong>：默认总是用最新版</p>
+<p><strong>API 用户</strong>：可以选择"latest"或锁定版本</p>
+<p><strong>建议</strong>：<br />
+- 开发环境：使用 <code>latest</code><br />
+- 生产环境：<strong>锁定版本号</strong>，灰度发布<br />
+- 升级时：先在测试环境验证，再更新生产</p>
+<h3 id="644-vs">6.4.4 文件级 vs 包级版本</h3>
+<p><strong>文件级</strong>：在 <code>SKILL.md</code> frontmatter 里加 <code>version</code> 字段</p>
+<div class="codehilite"><pre><span></span><code><span class="nn">---</span>
+<span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">pdf-form-filler</span>
+<span class="nt">version</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1.2.0</span>
+<span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">...</span>
+<span class="nn">---</span>
+</code></pre></div>
+
+<p><strong>包级</strong>：通过 Skills API 的版本号管理（生产推荐）</p>
+<hr />
+<h2 id="65-mcp">6.5 与 MCP 的协同设计</h2>
+<h3 id="651-skill-mcp">6.5.1 Skill 和 MCP 的本质区别</h3>
+<table>
+<thead>
+<tr>
+<th>维度</th>
+<th>Skill</th>
+<th>MCP Server</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>本质</strong></td>
+<td>静态指令 + 脚本</td>
+<td>动态运行的工具服务</td>
+</tr>
+<tr>
+<td><strong>加载</strong></td>
+<td>按需（静态文件）</td>
+<td>连接时加载（持续运行）</td>
+</tr>
+<tr>
+<td><strong>能力</strong></td>
+<td>教 AI 做事</td>
+<td>给 AI 工具</td>
+</tr>
+<tr>
+<td><strong>状态</strong></td>
+<td>无</td>
+<td>有（持续运行的进程）</td>
+</tr>
+<tr>
+<td><strong>网络</strong></td>
+<td>无（脚本本地跑）</td>
+<td>需要 server</td>
+</tr>
+</tbody>
+</table>
+<p><strong>经典比喻</strong>：<br />
+- <strong>Skill = 操作手册 + 工具箱</strong>（纸 + 锅）<br />
+- <strong>MCP = 外部供应商</strong>（供应商接进来了）</p>
+<h3 id="652-skill-mcp">6.5.2 Skill 调用 MCP</h3>
+<p><strong>场景</strong>：Skill 需要外部数据</p>
+<div class="codehilite"><pre><span></span><code><span class="c1"># skill: data-report</span>
+<span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">生成数据报告，需要从 Notion / DB 拉数据</span>
+
+<span class="c1"># 实际工作流：</span>
+<span class="c1"># 1. Claude 加载这个 skill</span>
+<span class="c1"># 2. Skill 主体说：&quot;用 notion MCP 拉取页面 X&quot;</span>
+<span class="c1"># 3. Claude 调用 MCP 工具</span>
+<span class="c1"># 4. 拿到数据后用 skill 里的脚本生成报告</span>
+</code></pre></div>
+
+<p><strong>SKILL.md 主体</strong>：</p>
+<div class="codehilite"><pre><span></span><code><span class="gu">## 工作流程</span>
+
+<span class="gu">### Step 1: 拉取数据</span>
+
+用 Notion MCP 拉取指定页面的内容：
+<span class="k">-</span><span class="w"> </span>调用 <span class="sb">`mcp__notion__get_page`</span> 获取页面
+<span class="k">-</span><span class="w"> </span>调用 <span class="sb">`mcp__notion__get_block_children`</span> 获取内容块
+
+<span class="gu">### Step 2: 处理数据</span>
+
+用本地的 <span class="sb">`scripts/analyze.py`</span> 处理...
+
+<span class="gu">### Step 3: 生成报告</span>
+
+调用 <span class="sb">`mcp__notion__create_page`</span> 写回新页面
+</code></pre></div>
+
+<h3 id="653-mcp-skill">6.5.3 MCP 提供能力，Skill 提供流程</h3>
+<p><strong>经典组合</strong>：</p>
+<table>
+<thead>
+<tr>
+<th>任务</th>
+<th>MCP（工具）</th>
+<th>Skill（流程）</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>客服数据查询</td>
+<td><code>notion</code> / <code>slack</code> MCP</td>
+<td>"客服应答流程" skill</td>
+</tr>
+<tr>
+<td>财务报告</td>
+<td>数据库 MCP</td>
+<td>"月报生成" skill</td>
+</tr>
+<tr>
+<td>CI/CD</td>
+<td><code>github</code> MCP</td>
+<td>"部署流程" skill</td>
+</tr>
+<tr>
+<td>文件操作</td>
+<td><code>filesystem</code> MCP</td>
+<td>"PDF 填表" skill</td>
+</tr>
+</tbody>
+</table>
+<p><strong>原则</strong>：<br />
+- <strong>MCP 负责"能连上"</strong>——给 AI 工具<br />
+- <strong>Skill 负责"会做"</strong>——给 AI 流程</p>
+<h3 id="654-skill-mcp">6.5.4 何时用 Skill、何时用 MCP</h3>
+<p><strong>用 Skill</strong>：<br />
+- 流程是<strong>固定的</strong>（SOP）<br />
+- 不需要外部实时数据<br />
+- 团队内部知识沉淀</p>
+<p><strong>用 MCP</strong>：<br />
+- 需要<strong>实时</strong>外部数据<br />
+- 需要<strong>精确调用</strong>外部 API<br />
+- 不同任务需要不同工具组合</p>
+<p><strong>两者结合</strong>：<br />
+- 复杂工作流：Skill 给流程 + MCP 给工具<br />
+- 简单查询：只用 MCP<br />
+- 团队规范：只用 Skill</p>
+<hr />
+<h2 id="66-sub-agent">6.6 与 Sub-agent 的协同设计</h2>
+<h3 id="661-skill-sub-agent">6.6.1 Skill 和 Sub-agent 的本质区别</h3>
+<table>
+<thead>
+<tr>
+<th>维度</th>
+<th>Skill</th>
+<th>Sub-agent</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>本质</strong></td>
+<td>函数 / 工具</td>
+<td>LLM 实例</td>
+</tr>
+<tr>
+<td><strong>是否需要 LLM</strong></td>
+<td>❌</td>
+<td>✅</td>
+</tr>
+<tr>
+<td><strong>状态</strong></td>
+<td>无</td>
+<td>有（独立上下文）</td>
+</tr>
+<tr>
+<td><strong>推理能力</strong></td>
+<td>❌</td>
+<td>✅</td>
+</tr>
+<tr>
+<td><strong>Token 成本</strong></td>
+<td>低（无 LLM 调用）</td>
+<td>高（独立 LLM 调用）</td>
+</tr>
+</tbody>
+</table>
+<h3 id="662-skill-sub-agentcontext-fork">6.6.2 Skill 调 Sub-agent：<code>context: fork</code></h3>
+<div class="codehilite"><pre><span></span><code><span class="nn">---</span>
+<span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">deep-research</span>
+<span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">深度研究某个主题</span>
+<span class="nt">context</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">fork</span>
+<span class="nt">agent</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">general-purpose</span>
+<span class="nn">---</span>
+
+<span class="c1"># Deep Research</span>
+
+<span class="c1">## 工作流程</span>
+
+<span class="l l-Scalar l-Scalar-Plain">在 subagent 隔离上下文中执行：</span>
+
+<span class="l l-Scalar l-Scalar-Plain">1. 读 5-10 个相关文件</span>
+<span class="l l-Scalar l-Scalar-Plain">2. 搜索网络资料</span>
+<span class="l l-Scalar l-Scalar-Plain">3. 综合分析</span>
+<span class="l l-Scalar l-Scalar-Plain">4. 输出研究报告</span>
+</code></pre></div>
+
+<p><strong>效果</strong>：<br />
+- 主体被加载到<strong>新的 subagent 上下文</strong><br />
+- 不污染主对话<br />
+- 适合"大量读文件"的任务</p>
+<h3 id="663-skill-sub-agent">6.6.3 何时用 Skill、何时用 Sub-agent</h3>
+<p><strong>用 Skill</strong>：<br />
+- 流程固定，不需要 LLM 推理<br />
+- 跑脚本、出报告<br />
+- 团队规范</p>
+<p><strong>用 Sub-agent</strong>：<br />
+- 需要<strong>深度推理</strong>的任务<br />
+- 需要<strong>隔离上下文</strong>（大量读文件）<br />
+- 任务可以<strong>并行</strong>（多个 sub-agent 一起干）</p>
+<p><strong>用 Skill + Sub-agent</strong>：<br />
+- Skill 提供<strong>流程框架</strong><br />
+- Sub-agent 执行<strong>推理密集</strong>的步骤<br />
+- <code>context: fork</code> 启用 sub-agent</p>
+<hr />
+<h2 id="67">6.7 体系级架构模式</h2>
+<h3 id="671-1">6.7.1 模式 1：基础包 + 领域包</h3>
+<div class="codehilite"><pre><span></span><code>基础包（基础能力）：
+  - data-formatter      (格式化输出)
+  - error-handler       (统一错误处理)
+  - file-helper         (文件操作封装)
+
+领域包（业务能力）：
+  - finance-report      (财务报表，引用 data-formatter)
+  - sales-analysis      (销售分析，引用 data-formatter)
+  - hr-summary          (HR 总结，引用 data-formatter)
+</code></pre></div>
+
+<h3 id="672-2">6.7.2 模式 2：基础 + 适配</h3>
+<div class="codehilite"><pre><span></span><code>基础 skill: data-validator
+  - 通用数据验证规则
+
+适配 skill 1: data-validator-finance
+  - 金融领域特定验证（汇率精度、币种一致性）
+
+适配 skill 2: data-validator-medical
+  - 医疗领域特定验证（HIPAA 合规）
+</code></pre></div>
+
+<h3 id="673-3">6.7.3 模式 3：流水线编排</h3>
+<div class="codehilite"><pre><span></span><code>orchestrator-skill: data-pipeline
+  - 调用 analyzer-skill 分析数据
+  - 调用 transformer-skill 转换格式
+  - 调用 reporter-skill 生成报告
+  - 调用 notifier-skill 通知用户
+</code></pre></div>
+
+<p><strong>实现</strong>：在 orchestrator 主体里<strong>显式</strong>告诉 Claude 用 <code>/skill-name</code></p>
+<h3 id="674-4">6.7.4 模式 4：插件市场</h3>
+<div class="codehilite"><pre><span></span><code># 第三方 skill 仓库
+my-org-skills/
+├── finance/
+│   ├── tax-calculator
+│   ├── invoice-generator
+│   └── audit-checker
+├── marketing/
+│   ├── seo-analyzer
+│   ├── social-poster
+│   └── email-composer
+└── dev-tools/
+    ├── docker-helper
+    ├── k8s-debugger
+    └── log-analyzer
+
+# 用户只装需要的子集
+ln -s my-org-skills/finance/tax-calculator ~/.claude/skills/
+</code></pre></div>
+
+<hr />
+<h2 id="68">6.8 监控与可观测性</h2>
+<h3 id="681">6.8.1 关注的核心指标</h3>
+<table>
+<thead>
+<tr>
+<th>指标</th>
+<th>含义</th>
+<th>怎么测</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>触发率</strong></td>
+<td>skill 被触发的频率</td>
+<td>Claude Code 日志</td>
+</tr>
+<tr>
+<td><strong>触发准确率</strong></td>
+<td>触发后是否完成任务</td>
+<td>用户反馈</td>
+</tr>
+<tr>
+<td><strong>误触发率</strong></td>
+<td>触发后无意义</td>
+<td>用户反馈</td>
+</tr>
+<tr>
+<td><strong>加载成功率</strong></td>
+<td>SKILL.md 解析成功率</td>
+<td>启动日志</td>
+</tr>
+<tr>
+<td><strong>平均加载 token</strong></td>
+<td>加载到上下文的 token 数</td>
+<td><code>/context</code></td>
+</tr>
+<tr>
+<td><strong>执行成功率</strong></td>
+<td>脚本执行成功比例</td>
+<td>脚本日志</td>
+</tr>
+<tr>
+<td><strong>用户满意度</strong></td>
+<td>主观评价</td>
+<td>问卷</td>
+</tr>
+</tbody>
+</table>
+<h3 id="682">6.8.2 调试工具</h3>
+<p><strong>Claude Code 内置</strong>：</p>
+<div class="codehilite"><pre><span></span><code>/context<span class="w">        </span><span class="c1"># 看当前上下文占用</span>
+/help<span class="w">           </span><span class="c1"># 列出所有 skill 和命令</span>
+/cost<span class="w">           </span><span class="c1"># 看 token 成本</span>
+</code></pre></div>
+
+<p><strong>Skills API</strong>：</p>
+<div class="codehilite"><pre><span></span><code><span class="c1"># 看 skill 列表</span>
+<span class="n">client</span><span class="o">.</span><span class="n">beta</span><span class="o">.</span><span class="n">skills</span><span class="o">.</span><span class="n">list</span><span class="p">()</span>
+
+<span class="c1"># 看版本历史</span>
+<span class="n">client</span><span class="o">.</span><span class="n">beta</span><span class="o">.</span><span class="n">skills</span><span class="o">.</span><span class="n">versions</span><span class="o">.</span><span class="n">list</span><span class="p">(</span><span class="n">skill_id</span><span class="p">)</span>
+</code></pre></div>
+
+<h3 id="683">6.8.3 错误监控</h3>
+<div class="codehilite"><pre><span></span><code><span class="c1"># 自定义监控（应用层）</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">chat_with_skill_monitored</span><span class="p">(</span><span class="n">skill_id</span><span class="p">,</span> <span class="n">message</span><span class="p">):</span>
+    <span class="n">start</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">chat_with_skill</span><span class="p">(</span><span class="n">skill_id</span><span class="p">,</span> <span class="n">message</span><span class="p">)</span>
+        <span class="n">log_metric</span><span class="p">(</span><span class="s2">&quot;skill.success&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">tags</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;skill_id&quot;</span><span class="p">:</span> <span class="n">skill_id</span><span class="p">})</span>
+        <span class="k">return</span> <span class="n">result</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="n">log_metric</span><span class="p">(</span><span class="s2">&quot;skill.error&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">tags</span><span class="o">=</span><span class="p">{</span>
+            <span class="s2">&quot;skill_id&quot;</span><span class="p">:</span> <span class="n">skill_id</span><span class="p">,</span>
+            <span class="s2">&quot;error&quot;</span><span class="p">:</span> <span class="nb">type</span><span class="p">(</span><span class="n">e</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span>
+        <span class="p">})</span>
+        <span class="k">raise</span>
+    <span class="k">finally</span><span class="p">:</span>
+        <span class="n">log_metric</span><span class="p">(</span><span class="s2">&quot;skill.latency&quot;</span><span class="p">,</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">start</span><span class="p">)</span>
+</code></pre></div>
+
+<h3 id="684">6.8.4 定期审查</h3>
+<p><strong>月度审查清单</strong>：</p>
+<ul>
+<li>[ ] 哪些 skill 从未触发？（考虑删除）</li>
+<li>[ ] 哪些 skill 经常误触发？（改 description）</li>
+<li>[ ] 哪些 skill token 占用大？（精简或拆 reference）</li>
+<li>[ ] 哪些 skill 执行失败率高？（修脚本或加错误处理）</li>
+<li>[ ] 团队成员装了哪些 skill？（统一管理）</li>
+</ul>
+<hr />
+<h2 id="69">6.9 安全设计</h2>
+<h3 id="691-skill">6.9.1 Skill 的攻击面</h3>
+<p><strong>风险</strong>：<br />
+- Skill 包含可执行代码<br />
+- Skill 连接到外部网络<br />
+- Skill 处理敏感数据</p>
+<p><strong>攻击场景</strong>：<br />
+- 恶意 skill 注入（第三方来源不可信）<br />
+- 供应链攻击（依赖被污染）<br />
+- 数据外泄（脚本读取 ~/.ssh/id_rsa）<br />
+- 提示词注入（description 里藏恶意指令）</p>
+<h3 id="692">6.9.2 防御措施</h3>
+<p><strong>1. 来源审计</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="c1"># 安装前审查</span>
+git<span class="w"> </span>clone<span class="w"> </span>https://github.com/suspicious/skill-repo
+<span class="c1"># 检查：</span>
+<span class="c1">#   - 是否有 scripts/ 里跑可疑命令？</span>
+<span class="c1">#   - 是否有外部网络请求？</span>
+<span class="c1">#   - 是否有读写 ~/.ssh、~/.aws 等敏感路径？</span>
+</code></pre></div>
+
+<p><strong>2. 工具白名单</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="c1"># 限制 skill 只能用必要工具</span>
+<span class="nt">allowed-tools</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Read</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Grep</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Bash(python *)</span><span class="w">     </span><span class="c1"># 限定只能跑 python</span>
+<span class="w">  </span><span class="c1"># 不给 Write、Edit、危险 Bash</span>
+</code></pre></div>
+
+<p><strong>3. 路径白名单</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="nt">paths</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;src/**/*&quot;</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;tests/**/*&quot;</span>
+<span class="w">  </span><span class="c1"># 不给访问 .env、secrets/、node_modules/</span>
+</code></pre></div>
+
+<p><strong>4. 用户确认</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="c1"># 危险操作需要用户确认</span>
+<span class="nt">disable-model-invocation</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span><span class="w">   </span><span class="c1"># 只能手动触发</span>
+</code></pre></div>
+
+<p><strong>5. 企业管控</strong></p>
+<div class="codehilite"><pre><span></span><code>企业级 Managed Settings：
+  - 限制可装 skill 来源
+  - 强制代码扫描
+  - 审计所有 skill 行为
+  - 异常告警
+</code></pre></div>
+
+<h3 id="693">6.9.3 审计清单</h3>
+<ul>
+<li>[ ] Skill 来源可信（官方 / 内部 / 知名社区）</li>
+<li>[ ] 已审查所有 SKILL.md 内容</li>
+<li>[ ] 已审查所有 scripts/ 脚本</li>
+<li>[ ] 没有外网请求（除非必要）</li>
+<li>[ ] 没有读写敏感路径</li>
+<li>[ ] 没有收集 / 上传用户数据</li>
+<li>[ ] 有 allowed-tools 限制</li>
+<li>[ ] 有明确版本来源</li>
+</ul>
+<hr />
+<h2 id="610-checklist">6.10 体系设计 checklist</h2>
+<p>设计 Skill 体系时按这个清单检查：</p>
+<h3 id="_1">命名 &amp; 作用域</h3>
+<ul>
+<li>[ ] 命名体现<strong>领域 + 功能</strong></li>
+<li>[ ] 避免与现有 skill 重名</li>
+<li>[ ] 明确每个 skill 的作用域（个人 / 项目 / 企业）</li>
+</ul>
+<h3 id="_2">内容组织</h3>
+<ul>
+<li>[ ] 每个 skill 主体 &lt; 500 行</li>
+<li>[ ] description 100 词左右</li>
+<li>[ ] 引用结构清晰（SKILL.md → references/）</li>
+<li>[ ] 脚本职责单一</li>
+</ul>
+<h3 id="_3">调用控制</h3>
+<ul>
+<li>[ ] 危险 skill 用 <code>disable-model-invocation: true</code></li>
+<li>[ ] 后台 skill 用 <code>user-invocable: false</code></li>
+<li>[ ] paths 限制适用范围</li>
+<li>[ ] allowed-tools 限制能力</li>
+</ul>
+<h3 id="_4">协同设计</h3>
+<ul>
+<li>[ ] 多 skill 职责<strong>不重叠</strong></li>
+<li>[ ] 互斥 skill 在 description 互相排除</li>
+<li>[ ] 串行 / 并行模式明确</li>
+<li>[ ] 与 MCP / Sub-agent 边界清晰</li>
+</ul>
+<h3 id="_5">监控 &amp; 安全</h3>
+<ul>
+<li>[ ] 监控触发率和误触发率</li>
+<li>[ ] 定期审查未使用的 skill</li>
+<li>[ ] 来源审计机制</li>
+<li>[ ] 工具 / 路径白名单</li>
+<li>[ ] 版本管理策略</li>
+</ul>
+<h3 id="_6">文档</h3>
+<ul>
+<li>[ ] 每个 skill 有清晰用途说明</li>
+<li>[ ] 团队成员知道怎么装 / 怎么用</li>
+<li>[ ] 有升级 / 废弃流程</li>
+</ul>
+<hr />
+<h2 id="611-10">6.11 真实案例：10 人团队怎么设计</h2>
+<p><strong>场景</strong>：10 人前端团队，迭代节奏 2 周/次，需要 review、test、deploy 等环节</p>
+<h3 id="_7">设计方案</h3>
+<p><strong>个人级</strong>：</p>
+<div class="codehilite"><pre><span></span><code>~/.claude/skills/
+├── my-personal-prefs/      # 个人偏好（输出语言、代码风格）
+└── quick-snippets/         # 个人速查
+</code></pre></div>
+
+<p><strong>项目级</strong>（git 共享）：</p>
+<div class="codehilite"><pre><span></span><code>.claude/skills/
+├── fe-code-review/         # 前端代码审查（Vue/React）
+├── fe-test-gen/            # 单元测试生成
+├── commit-msg/             # commit 信息规范
+├── pr-template/            # PR 模板生成
+└── i18n-helper/            # 国际化文案
+</code></pre></div>
+
+<p><strong>企业级</strong>（Managed Settings）：</p>
+<div class="codehilite"><pre><span></span><code>managed-skills/
+├── company-coding-style/   # 全公司代码规范
+├── security-scan/          # 安全扫描基线
+└── legal-compliance/       # 合规检查
+</code></pre></div>
+
+<h3 id="_8">关键设计</h3>
+<ol>
+<li><strong>企业级强制基础规范</strong>——谁都必须用</li>
+<li><strong>项目级沉淀团队规范</strong>——git 共享</li>
+<li><strong>个人级允许个人偏好</strong>——不冲突别人</li>
+<li><strong>多 skill 协同</strong>：commit-msg + pr-template 配合，fe-code-review + security-scan 配合</li>
+</ol>
+<h3 id="_9">监控</h3>
+<ul>
+<li>每月 review skill 列表</li>
+<li>看哪些 skill 触发率低（可能没用）</li>
+<li>看哪些 skill 误触发率高（需改）</li>
+<li>收集团队反馈</li>
+</ul>
+<hr />
+<h2 id="612">6.12 接下来</h2>
+<ul>
+<li>想了解不同 IDE / 平台的 skill 体系差异 → <a href="./07-ecosystem.html">第 7 章 · 生态对照</a></li>
+<li>触发 / 加载有问题想排查 → <a href="./08-debug.html">第 8 章 · 调试与反模式</a></li>
+</ul>
+    </article>
+</div>
+
+<a href="#" class="back-to-top" id="backToTop" title="返回顶部">↑</a>
+
+<footer>
+    <p>learn-skills · 基于 Anthropic Agent Skills 官方文档整理 · 2026-06</p>
+    <p>Skill 机制持续演进，请以 <a href="https://docs.claude.com/en/docs/agents-and-tools/agent-skills/overview">官方文档</a> 为准</p>
+</footer>
+
+<script>
+// 滚动出现"返回顶部"按钮
+const backBtn = document.getElementById('backToTop');
+window.addEventListener('scroll', () => {
+    backBtn.classList.toggle('visible', window.scrollY > 400);
+});
+backBtn.addEventListener('click', e => {
+    e.preventDefault();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+});
+
+// 当前滚动位置高亮 TOC
+const tocLinks = document.querySelectorAll('.toc a');
+const headings = Array.from(tocLinks).map(a => document.getElementById(a.getAttribute('href').slice(1)));
+if (headings.length > 0) {
+    window.addEventListener('scroll', () => {
+        const offset = 100;
+        let activeIdx = 0;
+        for (let i = 0; i < headings.length; i++) {
+            if (headings[i] && headings[i].offsetTop - offset < window.scrollY) {
+                activeIdx = i;
+            }
+        }
+        tocLinks.forEach((a, i) => {
+            a.classList.toggle('active', i === activeIdx);
+        });
+    });
+}
+</script>
+</body>
+</html>

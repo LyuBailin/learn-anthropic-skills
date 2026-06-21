@@ -1,0 +1,944 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>第 7 章 · 生态对照：Minimax Code、Cursor、Claude.ai、Trae · learn-skills</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/[email protected]/styles/github-dark.min.css">
+<style>
+:root {
+    --bg: #0d1117;
+    --panel: #161b22;
+    --border: #30363d;
+    --text: #e6edf3;
+    --muted: #8b949e;
+    --accent: #f0883e;
+    --accent-2: #58a6ff;
+    --link: #58a6ff;
+    --code-bg: #161b22;
+}
+* { box-sizing: border-box; }
+html, body {
+    margin: 0;
+    padding: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+    line-height: 1.7;
+    font-size: 16px;
+}
+
+/* 顶部导航 */
+header.nav {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: rgba(13, 17, 23, 0.95);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--border);
+    padding: 12px 0;
+}
+.nav-container {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 0 24px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+.nav-brand {
+    font-weight: 700;
+    font-size: 1.05rem;
+    color: var(--accent);
+    text-decoration: none;
+    margin-right: 16px;
+}
+.nav-brand:hover { color: var(--text); }
+.nav-link {
+    color: var(--muted);
+    text-decoration: none;
+    font-size: 0.88rem;
+    padding: 4px 10px;
+    border-radius: 6px;
+    transition: all 0.15s;
+    white-space: nowrap;
+}
+.nav-link:hover {
+    color: var(--text);
+    background: var(--panel);
+}
+.nav-link.active {
+    color: var(--accent);
+    background: rgba(240, 136, 62, 0.1);
+    border: 1px solid rgba(240, 136, 62, 0.3);
+}
+.nav-spacer { flex: 1; }
+.nav-extra {
+    color: var(--muted);
+    font-size: 0.8rem;
+    padding: 4px 8px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+}
+
+/* 主体布局 */
+.layout {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 32px 24px;
+    display: grid;
+    grid-template-columns: 220px 1fr;
+    gap: 32px;
+}
+@media (max-width: 900px) {
+    .layout { grid-template-columns: 1fr; }
+    aside.toc { display: none; }
+}
+
+/* TOC */
+aside.toc {
+    position: sticky;
+    top: 70px;
+    max-height: calc(100vh - 90px);
+    overflow-y: auto;
+    font-size: 0.85rem;
+}
+.toc-title {
+    color: var(--muted);
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 12px;
+}
+.toc ul {
+    list-style: none;
+    padding-left: 0;
+    margin: 0;
+}
+.toc ul ul {
+    padding-left: 16px;
+    border-left: 1px solid var(--border);
+    margin-top: 4px;
+}
+.toc li { margin: 4px 0; }
+.toc a {
+    color: var(--muted);
+    text-decoration: none;
+    display: block;
+    padding: 3px 8px;
+    border-radius: 4px;
+    transition: all 0.15s;
+}
+.toc a:hover {
+    color: var(--accent-2);
+    background: var(--panel);
+}
+.toc a.active {
+    color: var(--accent);
+    background: rgba(240, 136, 62, 0.08);
+}
+
+/* 内容 */
+article {
+    min-width: 0;
+    max-width: 920px;
+}
+article h1 {
+    font-size: 2.2rem;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 12px;
+    margin-top: 0;
+    margin-bottom: 24px;
+    color: var(--text);
+    letter-spacing: -0.02em;
+}
+article h2 {
+    font-size: 1.55rem;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 8px;
+    margin-top: 40px;
+    color: var(--text);
+}
+article h3 {
+    font-size: 1.2rem;
+    color: var(--text);
+    margin-top: 28px;
+}
+article h4 {
+    font-size: 1rem;
+    color: var(--accent-2);
+    margin-top: 20px;
+}
+article p { margin: 12px 0; }
+article a {
+    color: var(--link);
+    text-decoration: none;
+    border-bottom: 1px dashed transparent;
+}
+article a:hover {
+    border-bottom-color: var(--link);
+}
+article a.example-link {
+    color: var(--muted);
+    border-bottom: 1px dashed var(--muted);
+    font-style: italic;
+}
+article ul, article ol { padding-left: 28px; }
+article li { margin: 4px 0; }
+article hr {
+    border: 0;
+    border-top: 1px solid var(--border);
+    margin: 32px 0;
+}
+article blockquote {
+    margin: 16px 0;
+    padding: 8px 16px;
+    border-left: 4px solid var(--accent);
+    background: rgba(240, 136, 62, 0.06);
+    color: var(--muted);
+    border-radius: 0 6px 6px 0;
+}
+article blockquote p { margin: 4px 0; }
+article strong { color: var(--text); }
+article em { color: var(--accent); font-style: normal; }
+
+/* 标题锚点 */
+article h1, article h2, article h3, article h4 {
+    position: relative;
+}
+article h1:hover .headerlink,
+article h2:hover .headerlink,
+article h3:hover .headerlink,
+article h4:hover .headerlink {
+    opacity: 1;
+}
+.headerlink {
+    position: absolute;
+    left: -24px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--muted);
+    text-decoration: none;
+    opacity: 0;
+    font-weight: 400;
+    transition: opacity 0.15s;
+}
+.headerlink:hover { color: var(--accent); }
+
+/* 表格 */
+article table {
+    border-collapse: collapse;
+    width: 100%;
+    margin: 16px 0;
+    font-size: 0.92rem;
+}
+article th, article td {
+    border: 1px solid var(--border);
+    padding: 8px 14px;
+    text-align: left;
+}
+article th {
+    background: var(--panel);
+    color: var(--accent-2);
+    font-weight: 600;
+}
+article tr:nth-child(even) td { background: rgba(255,255,255,0.02); }
+
+/* 代码 */
+article code {
+    background: rgba(110, 118, 129, 0.2);
+    color: #ff7b72;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 0.88em;
+    font-family: "JetBrains Mono", "Cascadia Code", Consolas, monospace;
+}
+article pre {
+    background: #161b22 !important;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 14px 16px;
+    overflow-x: auto;
+    font-size: 0.86rem;
+    line-height: 1.5;
+    margin: 14px 0;
+}
+article pre code {
+    background: none;
+    color: inherit;
+    padding: 0;
+    font-size: inherit;
+}
+
+/* 任务列表 */
+article input[type="checkbox"] { margin-right: 6px; }
+
+/* 底部 */
+footer {
+    max-width: 1280px;
+    margin: 60px auto 0;
+    padding: 24px;
+    border-top: 1px solid var(--border);
+    color: var(--muted);
+    font-size: 0.85rem;
+    text-align: center;
+}
+footer a { color: var(--accent-2); text-decoration: none; }
+
+/* 章节元信息 */
+.chapter-meta {
+    color: var(--muted);
+    font-size: 0.9rem;
+    margin-bottom: 32px;
+    display: flex;
+    gap: 16px;
+    align-items: center;
+}
+.chapter-meta .tag {
+    background: rgba(240, 136, 62, 0.12);
+    color: var(--accent);
+    padding: 3px 10px;
+    border-radius: 999px;
+    font-size: 0.78rem;
+    font-weight: 600;
+}
+
+/* 返回顶部 */
+.back-to-top {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    width: 40px;
+    height: 40px;
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 50%;
+    color: var(--muted);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    transition: all 0.2s;
+    z-index: 50;
+}
+.back-to-top.visible {
+    display: flex;
+}
+.back-to-top:hover {
+    color: var(--accent);
+    border-color: var(--accent);
+}
+</style>
+</head>
+<body>
+
+<header class="nav">
+    <div class="nav-container">
+        <a href="index.html" class="nav-brand">learn-skills</a>
+        <a href="01-concept.html" class="nav-link">01. 概念入门</a>
+        <a href="02-anatomy.html" class="nav-link">02. 文件解剖</a>
+        <a href="03-loading.html" class="nav-link">03. 加载机制</a>
+        <a href="04-writing.html" class="nav-link">04. 实战编写</a>
+        <a href="05-api.html" class="nav-link">05. API 集成</a>
+        <a href="06-design.html" class="nav-link">06. 体系设计</a>
+        <a href="07-ecosystem.html" class="nav-link active">07. 生态对照</a>
+        <a href="08-debug.html" class="nav-link">08. 调试与反模式</a>
+        <div class="nav-spacer"></div>
+        <a href="index.html" class="nav-extra">总览</a>
+    </div>
+</header>
+
+<div class="layout">
+    <aside class="toc">
+        <div class="toc-title">本页目录</div>
+        <p style='color: var(--muted); font-size: 0.8rem;'>无章节</p>
+    </aside>
+    <article>
+        <div class="chapter-meta">
+            <span class="tag">第 7 章 · 生态对照</span>
+            <span>20 min · 横向</span>
+        </div>
+        <h1 id="7-minimax-codecursorclaudeaitrae">第 7 章 · 生态对照：Minimax Code、Cursor、Claude.ai、Trae</h1>
+<blockquote>
+<p>读完这一章你应该能：① 知道 Anthropic / OpenAI / Cursor / Trae 各自怎么实现 Skill；② 在不同平台迁移你的 skill；③ 理解 Minimax Code（我自己所在的 Agent 系统）的 skill 机制跟 Anthropic 的异同。</p>
+</blockquote>
+<hr />
+<h2 id="71">7.1 全景图</h2>
+<div class="codehilite"><pre><span></span><code>┌─────────────────────────────────────────────────────────────┐
+│                  Agent Skills 标准生态                       │
+├─────────────────────────────────────────────────────────────┤
+│                                                              │
+│  Anthropic (2025-10)        OpenAI (2026)                    │
+│  ├── Claude.ai             ├── ChatGPT Custom                │
+│  ├── Claude Code           ├── Codex CLI                     │
+│  ├── Messages API          └── Responses API                 │
+│  └── Agent SDK                                                │
+│                                                              │
+│  Cursor (2025-Q4)            Trae (2026-Q1)                  │
+│  └── .cursor/skills/         └── .trae/skills/               │
+│                                                              │
+│  Minimax Code (我们)         VS Code (扩展)                  │
+│  └── ~/.mavis/skills/        └── .vscode/skills/             │
+│                                                              │
+│  共同特点：都遵循 Agent Skills 开放标准                       │
+│  差异：具体命令、frontmatter 字段、子目录、触发方式           │
+└─────────────────────────────────────────────────────────────┘
+</code></pre></div>
+
+<p><strong>2025-12-18</strong> Agent Skills 升级为<strong>开放标准</strong>后，<strong>大部分 IDE / Agent 平台都已支持</strong>。</p>
+<hr />
+<h2 id="72-anthropic">7.2 Anthropic 全家桶</h2>
+<h3 id="721-claudeai">7.2.1 Claude.ai（网页版）</h3>
+<p><strong>特点</strong>：<br />
+- 面向<strong>非技术用户</strong><br />
+- 集成"skill creator"——可以用自然语言创建 skill<br />
+- 内置官方 skill（PDF、Word、Excel、PPT）</p>
+<p><strong>目录</strong>：<br />
+- 不直接操作文件系统<br />
+- 通过 Settings → Features → Skills 管理<br />
+- 自定义 skill 通过上传 zip</p>
+<p><strong>触发</strong>：<br />
+- Claude 根据任务<strong>自动</strong>调用<br />
+- 用户可以在 Settings 里手动启用 / 禁用</p>
+<h3 id="722-claude-codecli">7.2.2 Claude Code（CLI）</h3>
+<p><strong>特点</strong>：<br />
+- 面向<strong>开发者</strong><br />
+- 直接操作本地文件系统<br />
+- 完整的工具调用能力</p>
+<p><strong>目录</strong>：<br />
+- <code>~/.claude/skills/</code> （个人级，所有项目）<br />
+- <code>.claude/skills/</code> （项目级，当前项目）<br />
+- 插件 <code>&lt;plugin&gt;/skills/</code></p>
+<p><strong>触发</strong>：<br />
+- 自动：description 语义匹配<br />
+- 手动：<code>/skill-name</code> 或 <code>/skill-name arg1 arg2</code></p>
+<p><strong>内置 skill</strong>：<br />
+- <code>/batch</code> 并行大规模修改<br />
+- <code>/claude-api</code> API 参考<br />
+- <code>/debug</code> 调试<br />
+- <code>/loop</code> 定时任务<br />
+- <code>/simplify</code> 并行三 agent 审查</p>
+<h3 id="723-messages-api">7.2.3 Messages API</h3>
+<p><strong>特点</strong>：<br />
+- 面向<strong>应用集成</strong><br />
+- 通过 <code>client.beta.skills.*</code> 操作<br />
+- 必须配合 Code Execution Tool + Files API</p>
+<p><strong>详见</strong> <a href="./05-api.html">第 5 章 · API 集成</a></p>
+<h3 id="724-agent-sdk">7.2.4 Agent SDK</h3>
+<p><strong>特点</strong>：<br />
+- 在<strong>自定义 Agent</strong> 里使用 Skill<br />
+- 通过 <code>agents/skills/</code> 目录</p>
+<p><strong>示例</strong>：</p>
+<div class="codehilite"><pre><span></span><code>my-agent/
+├── agent.py
+├── agents/
+│   └── researcher.py
+└── .claude/skills/
+    ├── research-skill/
+    └── analysis-skill/
+</code></pre></div>
+
+<hr />
+<h2 id="73-cursor">7.3 Cursor</h2>
+<h3 id="731-cursor">7.3.1 Cursor 的三套机制（容易混淆）</h3>
+<p>Cursor 有<strong>多套</strong>类 skill 机制，名字容易搞混：</p>
+<table>
+<thead>
+<tr>
+<th>机制</th>
+<th>目录</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Rules</strong></td>
+<td><code>.cursor/rules/</code> 或 <code>~/.cursor/rules/</code></td>
+<td>始终加载的行为规则（类似 system prompt）</td>
+</tr>
+<tr>
+<td><strong>Commands</strong></td>
+<td><code>.cursor/commands/</code></td>
+<td>用户 <code>/</code> 调用的模板（类似 command）</td>
+</tr>
+<tr>
+<td><strong>Skills</strong></td>
+<td><code>.cursor/skills/</code></td>
+<td><strong>新</strong>：按需加载的 SOP（与 Anthropic 一致）</td>
+</tr>
+</tbody>
+</table>
+<h3 id="732-cursor-skills">7.3.2 Cursor Skills 规范</h3>
+<p><strong>目录</strong>：<code>.cursor/skills/&lt;name&gt;/SKILL.md</code></p>
+<p><strong>Frontmatter</strong>（<strong>基本兼容</strong> Anthropic）：</p>
+<div class="codehilite"><pre><span></span><code><span class="nn">---</span>
+<span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">my-skill</span>
+<span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">...</span>
+<span class="nn">---</span>
+</code></pre></div>
+
+<p><strong>差异</strong>：<br />
+- 部分高级字段（<code>hooks</code> <code>agent</code>）可能<strong>不支持</strong><br />
+- 触发方式：自动 + 手动（<code>/skill-name</code>）<br />
+- 上下文管理：Cursor 用 Composer + Agent 模式</p>
+<h3 id="733">7.3.3 迁移路径</h3>
+<p><strong>从 Anthropic → Cursor</strong>：<br />
+- 复制 <code>.claude/skills/</code> 内容到 <code>.cursor/skills/</code><br />
+- 大部分内容<strong>无需修改</strong><br />
+- 测试 frontmatter 字段是否支持</p>
+<p><strong>从 Cursor → Anthropic</strong>：<br />
+- 复制 <code>.cursor/skills/</code> 到 <code>.claude/skills/</code><br />
+- 如果用了 Cursor 特有字段，转换</p>
+<hr />
+<h2 id="74-trae">7.4 Trae（字节）</h2>
+<h3 id="741-trae">7.4.1 Trae 简介</h3>
+<p>字节的 AI IDE，2026 年初推出，<strong>原生支持 Agent Skills 开放标准</strong>。</p>
+<h3 id="742">7.4.2 目录与触发</h3>
+<p><strong>目录</strong>：<br />
+- 用户级：<code>~/.trae/skills/</code><br />
+- 项目级：<code>.trae/skills/</code></p>
+<p><strong>frontmatter</strong>：<strong>与 Anthropic 兼容</strong></p>
+<p><strong>触发</strong>：<br />
+- 自动（description 匹配）<br />
+- 手动（<code>/skill-name</code>）</p>
+<h3 id="743-trae">7.4.3 Trae 特色</h3>
+<ul>
+<li><strong>SOLO 模式</strong>：专注单一任务，类似 Claude Code</li>
+<li><strong>IDE 集成</strong>：与编辑器深度集成</li>
+<li><strong>多 Agent 协作</strong>：内置多 agent 调度</li>
+</ul>
+<h3 id="744">7.4.4 迁移</h3>
+<p><strong>Anthropic → Trae</strong>：直接复制 skill 目录即可</p>
+<div class="codehilite"><pre><span></span><code>cp<span class="w"> </span>-r<span class="w"> </span>~/.claude/skills/my-skill/<span class="w"> </span>~/.trae/skills/
+</code></pre></div>
+
+<hr />
+<h2 id="75-minimax-code">7.5 Minimax Code（我自己所在的系统）</h2>
+<blockquote>
+<p>这一节<strong>特别重要</strong>——你说"用 Minimax Code"，所以要专门讲清楚。</p>
+</blockquote>
+<h3 id="751-minimax-code-skill">7.5.1 Minimax Code 的 Skill 体系</h3>
+<p><strong>目录结构</strong>：</p>
+<div class="codehilite"><pre><span></span><code>用户级（个人，全局生效）：
+  Windows: C:\Users\&lt;user&gt;\.mavis\skills\
+  Mac/Linux: ~/.mavis/skills/
+
+Agent 级（mavis 系统内置，全局可用）：
+  C:\Users\&lt;user&gt;\.mavis\agents\mavis\skills\（默认 agent）
+
+项目级（当前项目）：
+  &lt;project&gt;/.mavis/skills/
+</code></pre></div>
+
+<p><strong>frontmatter</strong>：<strong>与 Anthropic 高度兼容</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="nn">---</span>
+<span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">my-skill</span>
+<span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">...</span>
+<span class="nt">allowed-tools</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">...</span>
+<span class="nt">paths</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">...</span>
+<span class="nn">---</span>
+</code></pre></div>
+
+<h3 id="752-anthropic">7.5.2 与 Anthropic 的差异</h3>
+<table>
+<thead>
+<tr>
+<th>维度</th>
+<th>Anthropic</th>
+<th>Minimax Code</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>目录</strong></td>
+<td><code>.claude/skills/</code></td>
+<td><code>.mavis/skills/</code></td>
+</tr>
+<tr>
+<td><strong>frontmatter</strong></td>
+<td>标准</td>
+<td><strong>兼容</strong>（少量字段差异）</td>
+</tr>
+<tr>
+<td><strong>触发方式</strong></td>
+<td>description 语义匹配</td>
+<td><strong>description 语义匹配</strong></td>
+</tr>
+<tr>
+<td><strong>加载机制</strong></td>
+<td>三层渐进式披露</td>
+<td><strong>同样的三层</strong></td>
+</tr>
+<tr>
+<td><strong>手动调用</strong></td>
+<td><code>/skill-name</code></td>
+<td><strong>支持</strong>（具体命令名见 Minimax 文档）</td>
+</tr>
+<tr>
+<td><strong>热更新</strong></td>
+<td>是</td>
+<td><strong>是</strong></td>
+</tr>
+<tr>
+<td><strong>scope</strong></td>
+<td>企业 / 个人 / 项目 / 插件</td>
+<td><strong>用户 / Agent / 项目</strong></td>
+</tr>
+</tbody>
+</table>
+<h3 id="753-minimax-code">7.5.3 Minimax Code 的特殊能力</h3>
+<p>Minimax Code 在 Anthropic 基础上<strong>扩展了</strong>几个能力：</p>
+<p><strong>1. 跨 Agent 共享</strong></p>
+<p>Skill 不只属于一个 agent——可以通过 <code>~/.mavis/agents/&lt;name&gt;/skills/</code> 让多个 agent 共享。</p>
+<p><strong>2. 工具生态更深</strong></p>
+<p>Minimax 集成了更多工具（lark-tools、minimax-pdf、minimax-pptx 等），skill 可以直接调用。</p>
+<p><strong>3. 协作模式</strong></p>
+<p>支持多个 session、多个 agent 协作完成复杂任务。</p>
+<h3 id="754-minimax-code-anthropic-skill">7.5.4 在 Minimax Code 中使用 Anthropic Skill</h3>
+<p>直接复制即可：</p>
+<div class="codehilite"><pre><span></span><code><span class="c1"># 把 Anthropic skill 复制到 Minimax Code</span>
+cp<span class="w"> </span>-r<span class="w"> </span>examples/pdf-form-filler/<span class="w"> </span>~/.mavis/skills/
+
+<span class="c1"># 下次跟 Mavis 对话时就会自动加载</span>
+</code></pre></div>
+
+<p><strong>Mavis 的处理方式</strong>：<br />
+- 自动加载 <code>~/.mavis/skills/</code> 下的所有 SKILL.md<br />
+- 按 Anthropic 同样的三层加载机制<br />
+- description 进 L1，匹配时加载主体</p>
+<h3 id="755-minimax-code-skill">7.5.5 Minimax Code 中的 skill 调试</h3>
+<table>
+<thead>
+<tr>
+<th>工具</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Mavis "列出可用 skill"</code></td>
+<td>查看当前 session 可见的所有 skill</td>
+</tr>
+<tr>
+<td><code>Mavis "skill X 加载了什么"</code></td>
+<td>验证 skill 是否被正确加载</td>
+</tr>
+<tr>
+<td><code>Mavis "为什么不用 skill X"</code></td>
+<td>排查触发问题</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="76-openai-chatgpt-codex">7.6 OpenAI ChatGPT / Codex</h2>
+<h3 id="761-chatgpt-custom-skills2026">7.6.1 ChatGPT Custom Skills（2026）</h3>
+<p>OpenAI 在 2026 年初跟进 Agent Skills 开放标准。</p>
+<p><strong>目录</strong>：<br />
+- 用户级：ChatGPT Settings → Custom Skills<br />
+- 项目级：<code>&lt;project&gt;/.codex/skills/</code></p>
+<p><strong>frontmatter</strong>：<strong>高度兼容</strong> Anthropic 规范</p>
+<p><strong>差异</strong>：<br />
+- 默认触发可能更保守（OpenAI 倾向保守）<br />
+- 高级字段支持可能延迟</p>
+<h3 id="762-codex-cli">7.6.2 Codex CLI</h3>
+<p>OpenAI 的命令行工具，类似 Claude Code。</p>
+<p><strong>目录</strong>：<code>~/.codex/skills/</code> 或 <code>.codex/skills/</code></p>
+<p><strong>与 Claude Code 差异</strong>：<br />
+- 默认模型不同<br />
+- 工具集不同<br />
+- Skill 规范兼容</p>
+<hr />
+<h2 id="77-vs-code-jetbrains">7.7 VS Code / JetBrains 扩展</h2>
+<h3 id="771-vs-code-agent-skills">7.7.1 VS Code Agent Skills 扩展</h3>
+<p><strong>安装</strong>：从 VS Code Marketplace 搜"Agent Skills"</p>
+<p><strong>目录</strong>：<br />
+- <code>&lt;workspace&gt;/.vscode/skills/</code><br />
+- <code>~/.vscode/skills/</code></p>
+<p><strong>与编辑器集成</strong>：<br />
+- 在 Chat 面板中触发<br />
+- 与文件 / 编辑器深度集成<br />
+- 可访问 LSP 工具</p>
+<h3 id="772-jetbrains">7.7.2 JetBrains</h3>
+<p>通过插件支持，目录约定与 VS Code 类似。</p>
+<hr />
+<h2 id="78">7.8 跨平台迁移指南</h2>
+<h3 id="781">7.8.1 通用迁移步骤</h3>
+<div class="codehilite"><pre><span></span><code><span class="c1"># 1. 备份原 skill</span>
+cp<span class="w"> </span>-r<span class="w"> </span>.claude/skills/my-skill/<span class="w"> </span>./my-skill-backup/
+
+<span class="c1"># 2. 复制到目标平台</span>
+cp<span class="w"> </span>-r<span class="w"> </span>.claude/skills/my-skill/<span class="w"> </span>&lt;target-platform&gt;/skills/
+
+<span class="c1"># 3. 验证 frontmatter 字段</span>
+<span class="c1"># 4. 测试触发</span>
+</code></pre></div>
+
+<h3 id="782">7.8.2 字段兼容性矩阵</h3>
+<table>
+<thead>
+<tr>
+<th>字段</th>
+<th>Anthropic</th>
+<th>Minimax Code</th>
+<th>Cursor</th>
+<th>Trae</th>
+<th>Codex</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>name</td>
+<td>✅</td>
+<td>✅</td>
+<td>✅</td>
+<td>✅</td>
+<td>✅</td>
+</tr>
+<tr>
+<td>description</td>
+<td>✅</td>
+<td>✅</td>
+<td>✅</td>
+<td>✅</td>
+<td>✅</td>
+</tr>
+<tr>
+<td>when_to_use</td>
+<td>✅</td>
+<td>✅</td>
+<td>✅</td>
+<td>✅</td>
+<td>✅</td>
+</tr>
+<tr>
+<td>paths</td>
+<td>✅</td>
+<td>✅</td>
+<td>✅</td>
+<td>✅</td>
+<td>✅</td>
+</tr>
+<tr>
+<td>allowed-tools</td>
+<td>✅</td>
+<td>✅</td>
+<td>⚠️</td>
+<td>✅</td>
+<td>✅</td>
+</tr>
+<tr>
+<td>argument-hint</td>
+<td>✅</td>
+<td>✅</td>
+<td>✅</td>
+<td>✅</td>
+<td>✅</td>
+</tr>
+<tr>
+<td>disable-model-invocation</td>
+<td>✅</td>
+<td>✅</td>
+<td>⚠️</td>
+<td>✅</td>
+<td>✅</td>
+</tr>
+<tr>
+<td>user-invocable</td>
+<td>✅</td>
+<td>✅</td>
+<td>⚠️</td>
+<td>✅</td>
+<td>✅</td>
+</tr>
+<tr>
+<td>model</td>
+<td>✅</td>
+<td>⚠️</td>
+<td>⚠️</td>
+<td>✅</td>
+<td>⚠️</td>
+</tr>
+<tr>
+<td>context: fork</td>
+<td>✅</td>
+<td>⚠️</td>
+<td>❌</td>
+<td>⚠️</td>
+<td>⚠️</td>
+</tr>
+<tr>
+<td>agent</td>
+<td>✅</td>
+<td>❌</td>
+<td>❌</td>
+<td>⚠️</td>
+<td>❌</td>
+</tr>
+<tr>
+<td>hooks</td>
+<td>✅</td>
+<td>⚠️</td>
+<td>❌</td>
+<td>⚠️</td>
+<td>❌</td>
+</tr>
+<tr>
+<td>shell</td>
+<td>✅</td>
+<td>✅</td>
+<td>❌</td>
+<td>✅</td>
+<td>✅</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>✅ 完整支持 · ⚠️ 部分支持或行为不同 · ❌ 不支持</p>
+</blockquote>
+<p><strong>迁移建议</strong>：<br />
+- <strong>优先使用通用字段</strong>（name、description、when_to_use、paths、allowed-tools、argument-hint）<br />
+- <strong>避免使用平台特有字段</strong>（<code>agent</code>、<code>hooks</code>）<br />
+- 实在要用，先查目标平台文档</p>
+<h3 id="783">7.8.3 平台差异的具体例子</h3>
+<p><strong>例子 1：<code>context: fork</code></strong></p>
+<ul>
+<li>Anthropic：✅ 在 sub-agent 隔离上下文运行</li>
+<li>Minimax Code：⚠️ 行为可能略有不同（具体见文档）</li>
+<li>Cursor：❌ 不支持，会被忽略</li>
+<li>Trae：⚠️ 行为依赖具体版本</li>
+</ul>
+<p><strong>建议</strong>：如果需要这个能力，写一个<strong>没有 context: fork</strong> 的备选版本，平台不支持时手动调用 sub-agent。</p>
+<p><strong>例子 2：<code>hooks</code></strong></p>
+<ul>
+<li>Anthropic：✅ 完整 PreToolUse / PostToolUse 钩子</li>
+<li>Minimax Code：⚠️ 部分支持</li>
+<li>其他平台：大多不支持</li>
+</ul>
+<p><strong>建议</strong>：把钩子逻辑写在 skill 主体里，平台不钩子也能跑。</p>
+<hr />
+<h2 id="79">7.9 平台选型建议</h2>
+<h3 id="791-claude-code">7.9.1 用 Claude Code 当</h3>
+<ul>
+<li>想要<strong>最丰富的 skill 生态</strong>（Anthropic 一手）</li>
+<li>主要在<strong>终端</strong>工作</li>
+<li>习惯 Anthropic 工具链</li>
+</ul>
+<h3 id="792-minimax-code">7.9.2 用 Minimax Code 当</h3>
+<ul>
+<li>想要<strong>多 agent 协作</strong>能力</li>
+<li>集成 lark / 国内工具</li>
+<li>跨平台（macOS / Windows / Linux）</li>
+<li>需要<strong>长期记忆</strong>和<strong>任务管理</strong></li>
+</ul>
+<h3 id="793-cursor">7.9.3 用 Cursor 当</h3>
+<ul>
+<li>已经在用 Cursor 编辑器</li>
+<li>想要 IDE 深度集成</li>
+<li>不需要 sub-agent 调度</li>
+</ul>
+<h3 id="794-trae">7.9.4 用 Trae 当</h3>
+<ul>
+<li>在中国地区使用（国内服务稳定）</li>
+<li>喜欢字节系产品</li>
+<li>想要中文友好</li>
+</ul>
+<h3 id="795-vs-code">7.9.5 用 VS Code 扩展当</h3>
+<ul>
+<li>主要在 VS Code 工作</li>
+<li>想要扩展生态</li>
+<li>不需要 agent 调度</li>
+</ul>
+<hr />
+<h2 id="710">7.10 一个真实的迁移故事</h2>
+<p><strong>场景</strong>：你的团队原本用 Claude Code，迁移到 Minimax Code</p>
+<p><strong>Step 1：盘点 skill</strong></p>
+<div class="codehilite"><pre><span></span><code>ls<span class="w"> </span>.claude/skills/
+<span class="c1"># code-review/</span>
+<span class="c1"># pdf-form-filler/</span>
+<span class="c1"># meeting-minutes/</span>
+<span class="c1"># data-analyzer/</span>
+</code></pre></div>
+
+<p><strong>Step 2：迁移</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="c1"># 复制到 Minimax Code</span>
+mkdir<span class="w"> </span>-p<span class="w"> </span>~/.mavis/skills
+cp<span class="w"> </span>-r<span class="w"> </span>.claude/skills/*<span class="w"> </span>~/.mavis/skills/
+
+<span class="c1"># 验证</span>
+ls<span class="w"> </span>~/.mavis/skills/
+<span class="c1"># code-review/  pdf-form-filler/  meeting-minutes/  data-analyzer/</span>
+</code></pre></div>
+
+<p><strong>Step 3：测试</strong></p>
+<p>跟 Mavis 说："列出可用 skill"——应该看到所有 4 个</p>
+<p><strong>Step 4：处理不兼容字段</strong></p>
+<p>如果 skill 用了 <code>agent</code> 或 <code>hooks</code> 字段，需要在 Minimax Code 里找替代方案</p>
+<p><strong>Step 5：整理项目级 skill</strong></p>
+<p>如果项目里有 skill，复制到 <code>&lt;project&gt;/.mavis/skills/</code></p>
+<hr />
+<h2 id="711">7.11 关于"开放标准"</h2>
+<p><strong>2025-12-18</strong>，Anthropic 把 Agent Skills 升级为<strong>开放标准</strong>：</p>
+<ul>
+<li>规范发布在 <strong>agentskills.io</strong></li>
+<li>OpenAI、Cursor、Trae、Codex 都已跟进</li>
+<li>目标：让 Skill 成为 Agent 生态的"应用"</li>
+</ul>
+<p><strong>影响</strong>：<br />
+- ✅ 一次编写，多平台运行<br />
+- ✅ 团队资产可移植<br />
+- ⚠️ 高级功能（hooks、特定 agent）有平台差异<br />
+- ⚠️ 仍在演进，要看官方规范</p>
+<p><strong>未来</strong>：<br />
+- 技能市场（Skill Marketplace）<br />
+- 跨平台发现 / 安装<br />
+- 标准化 API（已有 /v1/skills）</p>
+<hr />
+<h2 id="712">7.12 接下来</h2>
+<ul>
+<li>Skill 触发不准或加载失败想排查 → <a href="./08-debug.html">第 8 章 · 调试与反模式</a></li>
+<li>想看完整示例 → <a href="./04-writing.html">第 4 章 · 实战编写</a></li>
+<li>回到项目根 → <a href="../README.md">README</a></li>
+</ul>
+    </article>
+</div>
+
+<a href="#" class="back-to-top" id="backToTop" title="返回顶部">↑</a>
+
+<footer>
+    <p>learn-skills · 基于 Anthropic Agent Skills 官方文档整理 · 2026-06</p>
+    <p>Skill 机制持续演进，请以 <a href="https://docs.claude.com/en/docs/agents-and-tools/agent-skills/overview">官方文档</a> 为准</p>
+</footer>
+
+<script>
+// 滚动出现"返回顶部"按钮
+const backBtn = document.getElementById('backToTop');
+window.addEventListener('scroll', () => {
+    backBtn.classList.toggle('visible', window.scrollY > 400);
+});
+backBtn.addEventListener('click', e => {
+    e.preventDefault();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+});
+
+// 当前滚动位置高亮 TOC
+const tocLinks = document.querySelectorAll('.toc a');
+const headings = Array.from(tocLinks).map(a => document.getElementById(a.getAttribute('href').slice(1)));
+if (headings.length > 0) {
+    window.addEventListener('scroll', () => {
+        const offset = 100;
+        let activeIdx = 0;
+        for (let i = 0; i < headings.length; i++) {
+            if (headings[i] && headings[i].offsetTop - offset < window.scrollY) {
+                activeIdx = i;
+            }
+        }
+        tocLinks.forEach((a, i) => {
+            a.classList.toggle('active', i === activeIdx);
+        });
+    });
+}
+</script>
+</body>
+</html>

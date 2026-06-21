@@ -1,0 +1,1605 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>第 4 章 · 实战编写：4 个完整可运行示例 · learn-skills</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/[email protected]/styles/github-dark.min.css">
+<style>
+:root {
+    --bg: #0d1117;
+    --panel: #161b22;
+    --border: #30363d;
+    --text: #e6edf3;
+    --muted: #8b949e;
+    --accent: #f0883e;
+    --accent-2: #58a6ff;
+    --link: #58a6ff;
+    --code-bg: #161b22;
+}
+* { box-sizing: border-box; }
+html, body {
+    margin: 0;
+    padding: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+    line-height: 1.7;
+    font-size: 16px;
+}
+
+/* 顶部导航 */
+header.nav {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: rgba(13, 17, 23, 0.95);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--border);
+    padding: 12px 0;
+}
+.nav-container {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 0 24px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+.nav-brand {
+    font-weight: 700;
+    font-size: 1.05rem;
+    color: var(--accent);
+    text-decoration: none;
+    margin-right: 16px;
+}
+.nav-brand:hover { color: var(--text); }
+.nav-link {
+    color: var(--muted);
+    text-decoration: none;
+    font-size: 0.88rem;
+    padding: 4px 10px;
+    border-radius: 6px;
+    transition: all 0.15s;
+    white-space: nowrap;
+}
+.nav-link:hover {
+    color: var(--text);
+    background: var(--panel);
+}
+.nav-link.active {
+    color: var(--accent);
+    background: rgba(240, 136, 62, 0.1);
+    border: 1px solid rgba(240, 136, 62, 0.3);
+}
+.nav-spacer { flex: 1; }
+.nav-extra {
+    color: var(--muted);
+    font-size: 0.8rem;
+    padding: 4px 8px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+}
+
+/* 主体布局 */
+.layout {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 32px 24px;
+    display: grid;
+    grid-template-columns: 220px 1fr;
+    gap: 32px;
+}
+@media (max-width: 900px) {
+    .layout { grid-template-columns: 1fr; }
+    aside.toc { display: none; }
+}
+
+/* TOC */
+aside.toc {
+    position: sticky;
+    top: 70px;
+    max-height: calc(100vh - 90px);
+    overflow-y: auto;
+    font-size: 0.85rem;
+}
+.toc-title {
+    color: var(--muted);
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 12px;
+}
+.toc ul {
+    list-style: none;
+    padding-left: 0;
+    margin: 0;
+}
+.toc ul ul {
+    padding-left: 16px;
+    border-left: 1px solid var(--border);
+    margin-top: 4px;
+}
+.toc li { margin: 4px 0; }
+.toc a {
+    color: var(--muted);
+    text-decoration: none;
+    display: block;
+    padding: 3px 8px;
+    border-radius: 4px;
+    transition: all 0.15s;
+}
+.toc a:hover {
+    color: var(--accent-2);
+    background: var(--panel);
+}
+.toc a.active {
+    color: var(--accent);
+    background: rgba(240, 136, 62, 0.08);
+}
+
+/* 内容 */
+article {
+    min-width: 0;
+    max-width: 920px;
+}
+article h1 {
+    font-size: 2.2rem;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 12px;
+    margin-top: 0;
+    margin-bottom: 24px;
+    color: var(--text);
+    letter-spacing: -0.02em;
+}
+article h2 {
+    font-size: 1.55rem;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 8px;
+    margin-top: 40px;
+    color: var(--text);
+}
+article h3 {
+    font-size: 1.2rem;
+    color: var(--text);
+    margin-top: 28px;
+}
+article h4 {
+    font-size: 1rem;
+    color: var(--accent-2);
+    margin-top: 20px;
+}
+article p { margin: 12px 0; }
+article a {
+    color: var(--link);
+    text-decoration: none;
+    border-bottom: 1px dashed transparent;
+}
+article a:hover {
+    border-bottom-color: var(--link);
+}
+article a.example-link {
+    color: var(--muted);
+    border-bottom: 1px dashed var(--muted);
+    font-style: italic;
+}
+article ul, article ol { padding-left: 28px; }
+article li { margin: 4px 0; }
+article hr {
+    border: 0;
+    border-top: 1px solid var(--border);
+    margin: 32px 0;
+}
+article blockquote {
+    margin: 16px 0;
+    padding: 8px 16px;
+    border-left: 4px solid var(--accent);
+    background: rgba(240, 136, 62, 0.06);
+    color: var(--muted);
+    border-radius: 0 6px 6px 0;
+}
+article blockquote p { margin: 4px 0; }
+article strong { color: var(--text); }
+article em { color: var(--accent); font-style: normal; }
+
+/* 标题锚点 */
+article h1, article h2, article h3, article h4 {
+    position: relative;
+}
+article h1:hover .headerlink,
+article h2:hover .headerlink,
+article h3:hover .headerlink,
+article h4:hover .headerlink {
+    opacity: 1;
+}
+.headerlink {
+    position: absolute;
+    left: -24px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--muted);
+    text-decoration: none;
+    opacity: 0;
+    font-weight: 400;
+    transition: opacity 0.15s;
+}
+.headerlink:hover { color: var(--accent); }
+
+/* 表格 */
+article table {
+    border-collapse: collapse;
+    width: 100%;
+    margin: 16px 0;
+    font-size: 0.92rem;
+}
+article th, article td {
+    border: 1px solid var(--border);
+    padding: 8px 14px;
+    text-align: left;
+}
+article th {
+    background: var(--panel);
+    color: var(--accent-2);
+    font-weight: 600;
+}
+article tr:nth-child(even) td { background: rgba(255,255,255,0.02); }
+
+/* 代码 */
+article code {
+    background: rgba(110, 118, 129, 0.2);
+    color: #ff7b72;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 0.88em;
+    font-family: "JetBrains Mono", "Cascadia Code", Consolas, monospace;
+}
+article pre {
+    background: #161b22 !important;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 14px 16px;
+    overflow-x: auto;
+    font-size: 0.86rem;
+    line-height: 1.5;
+    margin: 14px 0;
+}
+article pre code {
+    background: none;
+    color: inherit;
+    padding: 0;
+    font-size: inherit;
+}
+
+/* 任务列表 */
+article input[type="checkbox"] { margin-right: 6px; }
+
+/* 底部 */
+footer {
+    max-width: 1280px;
+    margin: 60px auto 0;
+    padding: 24px;
+    border-top: 1px solid var(--border);
+    color: var(--muted);
+    font-size: 0.85rem;
+    text-align: center;
+}
+footer a { color: var(--accent-2); text-decoration: none; }
+
+/* 章节元信息 */
+.chapter-meta {
+    color: var(--muted);
+    font-size: 0.9rem;
+    margin-bottom: 32px;
+    display: flex;
+    gap: 16px;
+    align-items: center;
+}
+.chapter-meta .tag {
+    background: rgba(240, 136, 62, 0.12);
+    color: var(--accent);
+    padding: 3px 10px;
+    border-radius: 999px;
+    font-size: 0.78rem;
+    font-weight: 600;
+}
+
+/* 返回顶部 */
+.back-to-top {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    width: 40px;
+    height: 40px;
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 50%;
+    color: var(--muted);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    transition: all 0.2s;
+    z-index: 50;
+}
+.back-to-top.visible {
+    display: flex;
+}
+.back-to-top:hover {
+    color: var(--accent);
+    border-color: var(--accent);
+}
+</style>
+</head>
+<body>
+
+<header class="nav">
+    <div class="nav-container">
+        <a href="index.html" class="nav-brand">learn-skills</a>
+        <a href="01-concept.html" class="nav-link">01. 概念入门</a>
+        <a href="02-anatomy.html" class="nav-link">02. 文件解剖</a>
+        <a href="03-loading.html" class="nav-link">03. 加载机制</a>
+        <a href="04-writing.html" class="nav-link active">04. 实战编写</a>
+        <a href="05-api.html" class="nav-link">05. API 集成</a>
+        <a href="06-design.html" class="nav-link">06. 体系设计</a>
+        <a href="07-ecosystem.html" class="nav-link">07. 生态对照</a>
+        <a href="08-debug.html" class="nav-link">08. 调试与反模式</a>
+        <div class="nav-spacer"></div>
+        <a href="index.html" class="nav-extra">总览</a>
+    </div>
+</header>
+
+<div class="layout">
+    <aside class="toc">
+        <div class="toc-title">本页目录</div>
+        <p style='color: var(--muted); font-size: 0.8rem;'>无章节</p>
+    </aside>
+    <article>
+        <div class="chapter-meta">
+            <span class="tag">第 4 章 · 实战编写</span>
+            <span>40 min · 实践</span>
+        </div>
+        <h1 id="4-4">第 4 章 · 实战编写：4 个完整可运行示例</h1>
+<blockquote>
+<p>这一章给你 4 个端到端可用的 skill，覆盖不同场景和复杂度。<strong>所有示例都放在 <a href="../examples/"><code>examples/</code></a> 目录</strong>，可以直接复制使用。</p>
+</blockquote>
+<hr />
+<h2 id="_1">示例目录</h2>
+<table>
+<thead>
+<tr>
+<th>示例</th>
+<th>主题</th>
+<th>关键能力</th>
+<th>难度</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="#41-pdf-form-fillerpdf-表单填写">4.1 · pdf-form-filler</a></td>
+<td>PDF 表单提取与填写</td>
+<td>scripts + references</td>
+<td>⭐⭐</td>
+</tr>
+<tr>
+<td><a href="#42-code-review代码审查">4.2 · code-review</a></td>
+<td>git 集成代码审查</td>
+<td>paths + allowed-tools</td>
+<td>⭐⭐⭐</td>
+</tr>
+<tr>
+<td><a href="#43-meeting-minutes会议纪要">4.3 · meeting-minutes</a></td>
+<td>中文会议整理</td>
+<td>多 references + context: fork</td>
+<td>⭐⭐⭐</td>
+</tr>
+<tr>
+<td><a href="#44-api-skill-pythonapi-集成">4.4 · api-skill-python</a></td>
+<td>Python SDK 集成</td>
+<td>Files API + Code Execution</td>
+<td>⭐⭐⭐⭐</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="41-pdf-form-fillerpdf">4.1 · pdf-form-filler（PDF 表单填写）</h2>
+<blockquote>
+<p><strong>场景</strong>：用户上传一个 PDF 表单文件，希望 Claude 帮他填上内容。<br />
+<strong>价值</strong>：体现"scripts + references + L3 资源按需加载"的完整工作流。<br />
+<strong>来源</strong>：参考 Anthropic 官方 PDF skill 案例。</p>
+</blockquote>
+<h3 id="411">4.1.1 目录结构</h3>
+<div class="codehilite"><pre><span></span><code>pdf-form-filler/
+├── SKILL.md
+├── scripts/
+│   ├── extract_fields.py     # 提取 PDF 表单字段
+│   ├── fill_pdf.py           # 填写 PDF
+│   └── validate.py           # 验证填写结果
+├── references/
+│   ├── forms.md              # 表单填写细节
+│   └── acroform.md           # AcroForm 规范
+├── assets/
+│   └── sample.pdf            # 示例 PDF
+└── LICENSE.txt
+</code></pre></div>
+
+<h3 id="412-skillmd">4.1.2 SKILL.md</h3>
+<div class="codehilite"><pre><span></span><code><span class="nn">---</span>
+<span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">pdf-form-filler</span>
+<span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">|</span>
+<span class="w">  </span><span class="no">填写 PDF 表单文件。自动提取表单字段、询问用户填入值、生成填写后的 PDF。</span>
+<span class="w">  </span><span class="no">当用户上传 PDF 并说&quot;填表&quot;、&quot;填这个表单&quot;、&quot;帮我填 PDF&quot;、&quot;fill this form&quot;时使用。</span>
+<span class="w">  </span><span class="no">支持 AcroForm 标准的 PDF（包括 W-9、发票、申请表的常见模板）。</span>
+<span class="nt">when_to_use</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">|</span>
+<span class="w">  </span><span class="no">Use this skill when the user provides a PDF file and wants to fill</span>
+<span class="w">  </span><span class="no">in form fields. Do NOT use this skill for: reading PDF text content</span>
+<span class="w">  </span><span class="no">(use document reading), signing PDFs, or creating new PDFs from scratch.</span>
+<span class="nt">paths</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;*.pdf&quot;</span>
+<span class="nt">allowed-tools</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Read</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Bash(python *)</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Bash(pip install *)</span>
+<span class="nt">argument-hint</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;[pdf-file-path]&quot;</span>
+<span class="nn">---</span>
+
+<span class="c1"># PDF Form Filler</span>
+
+<span class="c1">## 工作流程</span>
+
+<span class="c1">### 步骤 1：检查环境</span>
+
+<span class="l l-Scalar l-Scalar-Plain">确保 `pypdf` 或 `pdfrw` 库已安装：</span>
+
+<span class="l l-Scalar l-Scalar-Plain">```bash</span>
+<span class="l l-Scalar l-Scalar-Plain">python -c &quot;import pypdf; print(pypdf.__version__)&quot; 2&gt;/dev/null || pip install pypdf</span>
+</code></pre></div>
+
+<h3 id="2">步骤 2：提取表单字段</h3>
+<p>运行 extract_fields.py，列出 PDF 的所有表单字段：</p>
+<div class="codehilite"><pre><span></span><code>python<span class="w"> </span>scripts/extract_fields.py<span class="w"> </span>&lt;pdf-path&gt;
+</code></pre></div>
+
+<p>输出示例：</p>
+<div class="codehilite"><pre><span></span><code><span class="p">{</span>
+<span class="w">  </span><span class="nt">&quot;fields&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">    </span><span class="p">{</span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;first_name&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;text&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;required&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">},</span>
+<span class="w">    </span><span class="p">{</span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;last_name&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;text&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;required&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">},</span>
+<span class="w">    </span><span class="p">{</span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;address&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;text&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;required&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">},</span>
+<span class="w">    </span><span class="p">{</span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;signature&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;text&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;required&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">}</span>
+<span class="w">  </span><span class="p">]</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<h3 id="3">步骤 3：询问用户</h3>
+<p>对每个 <code>required: true</code> 的字段，<strong>必须</strong>询问用户填什么。<br />
+对 <code>required: false</code> 的字段，可以跳过但提示用户。</p>
+<p><strong>关键</strong>：<strong>永远不要自动猜测用户身份信息</strong>（姓名、地址、SSN）。<br />
+如果用户没提供 → 询问。</p>
+<h3 id="4-pdf">步骤 4：填写 PDF</h3>
+<div class="codehilite"><pre><span></span><code>python<span class="w"> </span>scripts/fill_pdf.py<span class="w"> </span>&lt;pdf-path&gt;<span class="w"> </span>&lt;output-path&gt;<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--field<span class="w"> </span><span class="nv">first_name</span><span class="o">=</span><span class="s2">&quot;张&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--field<span class="w"> </span><span class="nv">last_name</span><span class="o">=</span><span class="s2">&quot;三&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--field<span class="w"> </span><span class="nv">address</span><span class="o">=</span><span class="s2">&quot;北京市朝阳区&quot;</span>
+</code></pre></div>
+
+<h3 id="5">步骤 5：验证</h3>
+<div class="codehilite"><pre><span></span><code>python<span class="w"> </span>scripts/validate.py<span class="w"> </span>&lt;output-path&gt;
+</code></pre></div>
+
+<p>打开 PDF 检查所有必填字段都已填上。</p>
+<h2 id="_2">关键决策点</h2>
+<ul>
+<li><strong>必填字段用户没回答</strong> → 不要用空值填充，提示用户必须提供</li>
+<li><strong>PDF 没有表单字段</strong> → 提示用户这是普通 PDF，不是表单</li>
+<li><strong>PDF 加密</strong> → 先解密（需要密码）</li>
+<li><strong>字段类型不在支持列表</strong> → 跳过并在结果中标注</li>
+</ul>
+<h2 id="_3">错误处理</h2>
+<table>
+<thead>
+<tr>
+<th>错误</th>
+<th>处理</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ModuleNotFoundError</td>
+<td>提示安装 <code>pip install pypdf</code></td>
+</tr>
+<tr>
+<td>FileNotFoundError</td>
+<td>检查文件路径</td>
+</tr>
+<tr>
+<td>PDF 加密</td>
+<td>提示用户提供密码</td>
+</tr>
+<tr>
+<td>字段不存在</td>
+<td>输出哪些字段不存在</td>
+</tr>
+</tbody>
+</table>
+<h2 id="_4">相关资源</h2>
+<ul>
+<li>表单填写详细说明见 <a href="references/forms.md" target="_blank" class="example-link" title="教程示例引用，点击查看源 md 文件">>references/forms.md</a></li>
+<li>AcroForm 规范见 <a href="references/acroform.md" target="_blank" class="example-link" title="教程示例引用，点击查看源 md 文件">>references/acroform.md</a></li>
+</ul>
+<div class="codehilite"><pre><span></span><code>### 4.1.3 scripts/extract_fields.py
+
+```python
+#!/usr/bin/env python3
+&quot;&quot;&quot;提取 PDF 表单的所有字段信息&quot;&quot;&quot;
+
+import sys
+import json
+from pathlib import Path
+
+def extract_fields(pdf_path: str) -&gt; dict:
+    try:
+        from pypdf import PdfReader
+    except ImportError:
+        print(json.dumps({
+            &quot;error&quot;: &quot;pypdf not installed&quot;,
+            &quot;fix&quot;: &quot;pip install pypdf&quot;
+        }, ensure_ascii=False, indent=2))
+        sys.exit(1)
+
+    if not Path(pdf_path).exists():
+        print(json.dumps({
+            &quot;error&quot;: f&quot;File not found: {pdf_path}&quot;
+        }, ensure_ascii=False, indent=2))
+        sys.exit(1)
+
+    reader = PdfReader(pdf_path)
+
+    if reader.is_encrypted:
+        print(json.dumps({
+            &quot;error&quot;: &quot;PDF is encrypted&quot;,
+            &quot;fix&quot;: &quot;Decrypt first or provide password&quot;
+        }, ensure_ascii=False, indent=2))
+        sys.exit(1)
+
+    fields = reader.get_fields() or {}
+
+    result = {
+        &quot;file&quot;: pdf_path,
+        &quot;page_count&quot;: len(reader.pages),
+        &quot;field_count&quot;: len(fields),
+        &quot;fields&quot;: [
+            {
+                &quot;name&quot;: name,
+                &quot;type&quot;: str(info.get(&quot;/FT&quot;, &quot;unknown&quot;)).replace(&quot;/&quot;, &quot;&quot;),
+                &quot;required&quot;: info.get(&quot;/Ff&quot;, 0) &amp; 2 == 2,  # /Ff bit 1 = required
+                &quot;value&quot;: info.get(&quot;/V&quot;, &quot;&quot;),
+                &quot;options&quot;: info.get(&quot;/Opt&quot;, None)  # for choice fields
+            }
+            for name, info in fields.items()
+        ]
+    }
+
+    print(json.dumps(result, ensure_ascii=False, indent=2))
+
+if __name__ == &quot;__main__&quot;:
+    if len(sys.argv) != 2:
+        print(&quot;Usage: extract_fields.py &lt;pdf-path&gt;&quot;)
+        sys.exit(1)
+    extract_fields(sys.argv[1])
+</code></pre></div>
+
+<h3 id="414-scriptsfill_pdfpy">4.1.4 scripts/fill_pdf.py</h3>
+<div class="codehilite"><pre><span></span><code><span class="ch">#!/usr/bin/env python3</span>
+<span class="sd">&quot;&quot;&quot;填写 PDF 表单&quot;&quot;&quot;</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">argparse</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">parse_field_args</span><span class="p">(</span><span class="n">args</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;解析 --field name=value 参数&quot;&quot;&quot;</span>
+    <span class="n">fields</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">arg</span> <span class="ow">in</span> <span class="n">args</span><span class="p">:</span>
+        <span class="k">if</span> <span class="s2">&quot;=&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">arg</span><span class="p">:</span>
+            <span class="k">continue</span>
+        <span class="n">name</span><span class="p">,</span> <span class="n">value</span> <span class="o">=</span> <span class="n">arg</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;=&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="n">fields</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+    <span class="k">return</span> <span class="n">fields</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">fill_pdf</span><span class="p">(</span><span class="n">input_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">output_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">fields</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">pypdf</span><span class="w"> </span><span class="kn">import</span> <span class="n">PdfReader</span><span class="p">,</span> <span class="n">PdfWriter</span>
+    <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">({</span><span class="s2">&quot;error&quot;</span><span class="p">:</span> <span class="s2">&quot;pypdf not installed&quot;</span><span class="p">}))</span>
+        <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="n">reader</span> <span class="o">=</span> <span class="n">PdfReader</span><span class="p">(</span><span class="n">input_path</span><span class="p">)</span>
+    <span class="n">writer</span> <span class="o">=</span> <span class="n">PdfWriter</span><span class="p">()</span>
+
+    <span class="c1"># 复制所有页面</span>
+    <span class="k">for</span> <span class="n">page</span> <span class="ow">in</span> <span class="n">reader</span><span class="o">.</span><span class="n">pages</span><span class="p">:</span>
+        <span class="n">writer</span><span class="o">.</span><span class="n">add_page</span><span class="p">(</span><span class="n">page</span><span class="p">)</span>
+
+    <span class="c1"># 填写字段</span>
+    <span class="n">writer</span><span class="o">.</span><span class="n">update_page_form_field_values</span><span class="p">(</span>
+        <span class="n">writer</span><span class="o">.</span><span class="n">pages</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+        <span class="n">fields</span>
+    <span class="p">)</span>
+
+    <span class="c1"># 处理只读字段（&quot;signature&quot; 等）</span>
+    <span class="c1"># pypdf 默认保留只读字段的现有值</span>
+
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">output_path</span><span class="p">,</span> <span class="s2">&quot;wb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="n">writer</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">({</span>
+        <span class="s2">&quot;status&quot;</span><span class="p">:</span> <span class="s2">&quot;ok&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;input&quot;</span><span class="p">:</span> <span class="n">input_path</span><span class="p">,</span>
+        <span class="s2">&quot;output&quot;</span><span class="p">:</span> <span class="n">output_path</span><span class="p">,</span>
+        <span class="s2">&quot;fields_filled&quot;</span><span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="n">fields</span><span class="p">),</span>
+        <span class="s2">&quot;field_names&quot;</span><span class="p">:</span> <span class="nb">list</span><span class="p">(</span><span class="n">fields</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+    <span class="p">},</span> <span class="n">ensure_ascii</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">2</span><span class="p">))</span>
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">parser</span> <span class="o">=</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">()</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;input&quot;</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;output&quot;</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--field&quot;</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s2">&quot;append&quot;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="p">[])</span>
+    <span class="n">args</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">parse_args</span><span class="p">()</span>
+
+    <span class="n">fields</span> <span class="o">=</span> <span class="n">parse_field_args</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">field</span><span class="p">)</span>
+    <span class="n">fill_pdf</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">input</span><span class="p">,</span> <span class="n">args</span><span class="o">.</span><span class="n">output</span><span class="p">,</span> <span class="n">fields</span><span class="p">)</span>
+</code></pre></div>
+
+<h3 id="415-referencesformsmd">4.1.5 references/forms.md</h3>
+<div class="codehilite"><pre><span></span><code><span class="gh"># PDF 表单填写详细说明</span>
+
+<span class="gu">## 字段类型</span>
+
+| AcroForm 类型 | 处理方式 |
+|--------------|---------|
+| /Tx (Text) | 直接填字符串 |
+| /Btn (Button) | 单选/复选/按钮，需要特殊处理 |
+| /Ch (Choice) | 下拉/列表，从预定义值选 |
+| /Sig (Signature) | 通常不程序化填写，提示用户手动签 |
+
+<span class="gu">## 必填字段判断</span>
+
+PDF 规范用 <span class="sb">`/Ff`</span> 标志位（Field Flags）：
+<span class="k">-</span><span class="w"> </span>bit 1 (<span class="sb">`0x02`</span>) = Required
+<span class="k">-</span><span class="w"> </span>bit 2 (<span class="sb">`0x04`</span>) = NoExport
+<span class="k">-</span><span class="w"> </span>bit 3 (<span class="sb">`0x08`</span>) = NoToggleToOff
+<span class="k">-</span><span class="w"> </span>bit 13 (<span class="sb">`0x1000`</span>) = Multiline
+<span class="k">-</span><span class="w"> </span>bit 14 (<span class="sb">`0x2000`</span>) = Password
+<span class="k">-</span><span class="w"> </span>bit 15 (<span class="sb">`0x4000`</span>) = NoToggleToOn
+<span class="k">-</span><span class="w"> </span>bit 16 (<span class="sb">`0x8000`</span>) = RadiosInUnison
+<span class="k">-</span><span class="w"> </span>bit 17 (<span class="sb">`0x10000`</span>) = CommitOnSelChange
+<span class="k">-</span><span class="w"> </span>bit 25 (<span class="sb">`0x1000000`</span>) = FileSelect
+
+<span class="gu">## 常见问题</span>
+
+<span class="gu">### Q: 填写后字段值不显示？</span>
+A: 多数 PDF 需要先 <span class="sb">`update_page_form_field_values`</span> 再重新生成。
+
+<span class="gu">### Q: &quot;signature&quot; 字段无法填写？</span>
+A: 数字签名是图像，程序无法直接添加。
+
+<span class="gu">### Q: 字段名带特殊字符？</span>
+A: 用 JSON 配置文件传字段，避免命令行参数解析问题。
+
+<span class="gu">## 进阶用法</span>
+
+<span class="k">-</span><span class="w"> </span><span class="gs">**批量填写**</span>：用 JSON 文件传字段
+<span class="k">-</span><span class="w"> </span><span class="gs">**模板化**</span>：保存常用填写模板
+<span class="k">-</span><span class="w"> </span><span class="gs">**验证规则**</span>：添加字段值校验（邮箱格式、电话格式）
+</code></pre></div>
+
+<h3 id="416">4.1.6 测试</h3>
+<div class="codehilite"><pre><span></span><code><span class="c1"># 准备一个简单的 PDF 表单（可以用 Adobe Acrobat 创建）</span>
+<span class="c1"># 假设表单有 first_name, last_name, email 三个字段</span>
+
+<span class="c1"># 1. 提取字段</span>
+python<span class="w"> </span>~/.claude/skills/pdf-form-filler/scripts/extract_fields.py<span class="w"> </span>sample.pdf
+
+<span class="c1"># 2. 在 Claude Code 中：</span>
+<span class="c1">#    &quot;用 pdf-form-filler 帮我填 sample.pdf，first_name=张, last_name=三, email=zhang@example.com&quot;</span>
+</code></pre></div>
+
+<hr />
+<h2 id="42-code-review">4.2 · code-review（代码审查）</h2>
+<blockquote>
+<p><strong>场景</strong>：用户改完代码想让 Claude 审查。<br />
+<strong>价值</strong>：体现 paths 过滤、allowed-tools 白名单、git 集成。</p>
+</blockquote>
+<h3 id="421">4.2.1 目录结构</h3>
+<div class="codehilite"><pre><span></span><code>code-review/
+├── SKILL.md
+├── references/
+│   ├── security-checklist.md    # 安全审查清单
+│   └── style-guide.md           # 团队代码风格
+└── examples/
+    └── good-pr.md               # 一个标准 PR 的范例
+</code></pre></div>
+
+<h3 id="422-skillmd">4.2.2 SKILL.md</h3>
+<div class="codehilite"><pre><span></span><code><span class="nn">---</span>
+<span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">code-review</span>
+<span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">|</span>
+<span class="w">  </span><span class="no">审查 Git 工作区和已 staged 的代码变更。按安全、命名、测试、性能四维度检查。</span>
+<span class="w">  </span><span class="no">当用户说&quot;review 我的代码&quot;、&quot;审查改动&quot;、&quot;看看这个 PR&quot;、&quot;code review&quot;时使用。</span>
+<span class="w">  </span><span class="no">输出结构化的严重问题、建议、亮点三个级别。</span>
+<span class="nt">when_to_use</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">|</span>
+<span class="w">  </span><span class="no">Use this skill when the user has uncommitted changes (in working tree</span>
+<span class="w">  </span><span class="no">or staged) and wants feedback. Don&#39;t use for: explaining how code works,</span>
+<span class="w">  </span><span class="no">or generating new code.</span>
+<span class="nt">paths</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;src/**/*&quot;</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;lib/**/*&quot;</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;app/**/*&quot;</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;**/*.ts&quot;</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;**/*.tsx&quot;</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;**/*.js&quot;</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;**/*.jsx&quot;</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;**/*.py&quot;</span>
+<span class="nt">allowed-tools</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Read</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Grep</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Glob</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Bash(git diff *)</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Bash(git log *)</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Bash(git status)</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Bash(git show *)</span>
+<span class="nt">argument-hint</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;[optional:</span><span class="nv"> </span><span class="s">base-branch]&quot;</span>
+<span class="nn">---</span>
+
+<span class="c1"># Code Review Skill</span>
+
+<span class="c1">## 工作流程</span>
+
+<span class="c1">### Step 1：收集变更</span>
+
+<span class="err">```</span><span class="l l-Scalar l-Scalar-Plain">bash</span>
+<span class="l l-Scalar l-Scalar-Plain">git status</span><span class="w">                    </span><span class="c1"># 看修改了哪些文件</span>
+<span class="l l-Scalar l-Scalar-Plain">git diff HEAD</span><span class="w">                 </span><span class="c1"># 工作区 + staged 完整 diff</span>
+<span class="l l-Scalar l-Scalar-Plain">git diff --stat HEAD</span><span class="w">          </span><span class="c1"># 变更统计</span>
+</code></pre></div>
+
+<p>如果用户指定 base branch（如 <code>main</code>），用：</p>
+<div class="codehilite"><pre><span></span><code>git<span class="w"> </span>diff<span class="w"> </span>main...HEAD<span class="w">          </span><span class="c1"># 对比 main 与当前</span>
+</code></pre></div>
+
+<h3 id="step-2">Step 2：分类审查</h3>
+<p>按严重度从高到低：</p>
+<h4 id="p0">🔴 P0：安全问题（必须修复）</h4>
+<ul>
+<li>硬编码的 secret（API key、密码、token、private key）</li>
+<li>SQL 注入风险（字符串拼接 SQL）</li>
+<li>命令注入（<code>os.system(user_input)</code>）</li>
+<li>路径遍历（<code>open(user_path)</code> 没校验）</li>
+<li>XSS（<code>innerHTML</code> 拼接未转义）</li>
+<li>不安全的反序列化（<code>pickle.loads</code> 不可信数据）</li>
+<li>SSRF（用户控制的 URL 没校验）</li>
+</ul>
+<h4 id="p1">🟡 P1：建议改进</h4>
+<ul>
+<li>错误处理（catch 块为空、错误消息泄露内部细节）</li>
+<li>资源泄漏（文件未关闭、连接未释放）</li>
+<li>命名不清（a, tmp, data, x）</li>
+<li>函数过长（&gt; 50 行）</li>
+<li>嵌套过深（&gt; 3 层）</li>
+<li>重复代码</li>
+<li>性能问题（N+1 查询、不必要的同步循环）</li>
+</ul>
+<h4 id="p2">🟢 P2：亮点</h4>
+<ul>
+<li>测试覆盖了边界</li>
+<li>错误处理完善</li>
+<li>命名清晰有业务含义</li>
+<li>注释解释"为什么"而非"做什么"</li>
+<li>复用了已有工具</li>
+</ul>
+<h3 id="step-3">Step 3：输出</h3>
+<p>按以下格式输出：</p>
+<div class="codehilite"><pre><span></span><code><span class="gu">## Code Review — &lt;branch-name&gt;</span>
+
+<span class="gu">### 变更统计</span>
+<span class="k">-</span><span class="w"> </span>文件数：N
+<span class="k">-</span><span class="w"> </span>新增：+N 行
+<span class="k">-</span><span class="w"> </span>删除：-N 行
+
+<span class="gu">### 🔴 严重问题</span>
+<span class="k">1.</span> <span class="gs">**[问题简述]**</span> — <span class="sb">`file:line`</span>
+<span class="w">   </span><span class="k">-</span><span class="w"> </span>问题：详细描述
+<span class="w">   </span><span class="k">-</span><span class="w"> </span>建议：如何修复
+
+<span class="gu">### 🟡 建议改进</span>
+<span class="k">1.</span> <span class="gs">**[建议简述]**</span> — <span class="sb">`file:line`</span>
+<span class="w">   </span><span class="k">-</span><span class="w"> </span>现状：...
+<span class="w">   </span><span class="k">-</span><span class="w"> </span>建议：...
+
+<span class="gu">### 🟢 亮点</span>
+<span class="k">-</span><span class="w"> </span>xxx
+
+<span class="gu">### 📋 总结</span>
+<span class="k">-</span><span class="w"> </span>建议：可以合并 / 需修改 / 需重大修改
+<span class="k">-</span><span class="w"> </span>关键关注：xxx
+</code></pre></div>
+
+<h2 id="_5">关键决策点</h2>
+<ul>
+<li><strong>变更太大</strong>（&gt; 500 行）→ 建议拆成多个 commit / PR</li>
+<li><strong>缺测试</strong> → 标注但不强制</li>
+<li><strong>涉及第三方库源码</strong> → 不审查</li>
+<li><strong>用户明确说"随便看看"</strong> → 跳过 P0 检查</li>
+</ul>
+<h2 id="_6">相关资源</h2>
+<ul>
+<li>安全审查详细清单见 <a href="references/security-checklist.md" target="_blank" class="example-link" title="教程示例引用，点击查看源 md 文件">>references/security-checklist.md</a></li>
+<li>团队代码风格见 <a href="references/style-guide.md" target="_blank" class="example-link" title="教程示例引用，点击查看源 md 文件">>references/style-guide.md</a></li>
+<li>标准 PR 范例见 <a href="../examples/good-pr.md" target="_blank" class="example-link" title="教程示例引用，点击查看源 md 文件">>examples/good-pr.md</a></li>
+</ul>
+<div class="codehilite"><pre><span></span><code>### 4.2.3 references/security-checklist.md
+
+```markdown
+# 安全审查详细清单
+
+## 1. 注入类漏洞
+
+### SQL 注入
+```python
+# ❌ 危险
+query = f&quot;SELECT * FROM users WHERE id = {user_id}&quot;
+
+# ✅ 安全
+query = &quot;SELECT * FROM users WHERE id = %s&quot;
+cursor.execute(query, (user_id,))
+</code></pre></div>
+
+<h3 id="_7">命令注入</h3>
+<div class="codehilite"><pre><span></span><code><span class="c1"># ❌ 危险</span>
+<span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;convert </span><span class="si">{</span><span class="n">user_input</span><span class="si">}</span><span class="s2"> output.png&quot;</span><span class="p">)</span>
+
+<span class="c1"># ✅ 安全</span>
+<span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">([</span><span class="s2">&quot;convert&quot;</span><span class="p">,</span> <span class="n">user_input</span><span class="p">,</span> <span class="s2">&quot;output.png&quot;</span><span class="p">],</span> <span class="n">check</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</code></pre></div>
+
+<h3 id="_8">路径遍历</h3>
+<div class="codehilite"><pre><span></span><code><span class="c1"># ❌ 危险</span>
+<span class="n">filename</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">GET</span><span class="p">[</span><span class="s2">&quot;file&quot;</span><span class="p">]</span>
+<span class="k">return</span> <span class="nb">open</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;/uploads/</span><span class="si">{</span><span class="n">filename</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+
+<span class="c1"># ✅ 安全</span>
+<span class="n">filename</span> <span class="o">=</span> <span class="n">secure_filename</span><span class="p">(</span><span class="n">request</span><span class="o">.</span><span class="n">GET</span><span class="p">[</span><span class="s2">&quot;file&quot;</span><span class="p">])</span>
+<span class="n">full_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s2">&quot;/uploads&quot;</span><span class="p">,</span> <span class="n">filename</span><span class="p">)</span>
+<span class="n">full_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">realpath</span><span class="p">(</span><span class="n">full_path</span><span class="p">)</span>
+<span class="k">if</span> <span class="ow">not</span> <span class="n">full_path</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;/uploads&quot;</span><span class="p">):</span>
+    <span class="n">abort</span><span class="p">(</span><span class="mi">403</span><span class="p">)</span>
+</code></pre></div>
+
+<h2 id="2_1">2. 敏感数据</h2>
+<div class="codehilite"><pre><span></span><code><span class="c1"># ❌ 危险</span>
+<span class="n">API_KEY</span> <span class="o">=</span> <span class="s2">&quot;sk-1234567890abcdef&quot;</span>
+
+<span class="c1"># ✅ 安全</span>
+<span class="n">API_KEY</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s2">&quot;API_KEY&quot;</span><span class="p">]</span>
+</code></pre></div>
+
+<h2 id="3_1">3. 加密 &amp; 认证</h2>
+<ul>
+<li>密码必须 bcrypt / argon2 哈希</li>
+<li>Token 不能放 URL（应在 Authorization header）</li>
+<li>不用自创加密算法</li>
+<li>HTTPS 强制</li>
+</ul>
+<h2 id="4">4. 错误处理</h2>
+<div class="codehilite"><pre><span></span><code><span class="c1"># ❌ 错误：吞掉异常</span>
+<span class="k">try</span><span class="p">:</span>
+    <span class="n">do_something</span><span class="p">()</span>
+<span class="k">except</span><span class="p">:</span>
+    <span class="k">pass</span>
+
+<span class="c1"># ❌ 错误：泄露内部细节</span>
+<span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+    <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;Error: </span><span class="si">{</span><span class="n">traceback</span><span class="o">.</span><span class="n">format_exc</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="mi">500</span>
+
+<span class="c1"># ✅ 正确</span>
+<span class="k">except</span> <span class="n">SpecificException</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">exception</span><span class="p">(</span><span class="s2">&quot;operation failed&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="s2">&quot;Internal error&quot;</span><span class="p">,</span> <span class="mi">500</span>
+</code></pre></div>
+
+<h2 id="5_1">5. 反序列化</h2>
+<div class="codehilite"><pre><span></span><code><span class="c1"># ❌ 危险：pickle 反序列化不可信数据</span>
+<span class="n">data</span> <span class="o">=</span> <span class="n">pickle</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">request</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
+
+<span class="c1"># ✅ 安全：用 JSON</span>
+<span class="n">data</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">request</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
+</code></pre></div>
+
+<h2 id="6-xss">6. XSS</h2>
+<div class="codehilite"><pre><span></span><code><span class="c1">// ❌ 危险</span>
+<span class="nx">element</span><span class="p">.</span><span class="nx">innerHTML</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">userInput</span><span class="p">;</span>
+
+<span class="c1">// ✅ 安全</span>
+<span class="nx">element</span><span class="p">.</span><span class="nx">textContent</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">userInput</span><span class="p">;</span>
+<span class="c1">// 或者用框架自带的转义</span>
+</code></pre></div>
+
+<h2 id="7-ssrf">7. SSRF</h2>
+<div class="codehilite"><pre><span></span><code><span class="c1"># ❌ 危险</span>
+<span class="n">url</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">json</span><span class="p">[</span><span class="s2">&quot;url&quot;</span><span class="p">]</span>
+<span class="k">return</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="p">)</span><span class="o">.</span><span class="n">text</span>
+
+<span class="c1"># ✅ 安全</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">urllib.parse</span><span class="w"> </span><span class="kn">import</span> <span class="n">urlparse</span>
+<span class="n">url</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">json</span><span class="p">[</span><span class="s2">&quot;url&quot;</span><span class="p">]</span>
+<span class="n">parsed</span> <span class="o">=</span> <span class="n">urlparse</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
+<span class="k">if</span> <span class="n">parsed</span><span class="o">.</span><span class="n">hostname</span> <span class="ow">in</span> <span class="n">ALLOWED_HOSTS</span><span class="p">:</span>
+    <span class="k">return</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="p">)</span><span class="o">.</span><span class="n">text</span>
+</code></pre></div>
+
+<h2 id="_9">自检清单</h2>
+<ul>
+<li>[ ] 没有硬编码 secret</li>
+<li>[ ] 没有 SQL 字符串拼接</li>
+<li>[ ] 没有 os.system(user_input)</li>
+<li>[ ] 文件路径已校验</li>
+<li>[ ] 密码用 bcrypt</li>
+<li>[ ] 异常不泄露内部细节</li>
+<li>[ ] 没有 pickle 反序列化</li>
+<li>[ ] 没有 innerHTML 拼接</li>
+<li>[ ] SSRF 域名已白名单</li>
+</ul>
+<div class="codehilite"><pre><span></span><code>### 4.2.4 测试
+
+```bash
+# 在 Claude Code 中
+# 1. 修改一些代码
+# 2. 触发 skill
+&gt; /code-review
+# 或者
+&gt; 帮我 review 一下当前的改动
+</code></pre></div>
+
+<hr />
+<h2 id="43-meeting-minutes">4.3 · meeting-minutes（会议纪要）</h2>
+<blockquote>
+<p><strong>场景</strong>：用户给一段会议录音转写文本，希望整理成结构化纪要。<br />
+<strong>价值</strong>：体现<strong>多 reference 按需加载</strong>（不同会议类型用不同模板）+ <strong>中文场景</strong> + <code>context: fork</code>。</p>
+</blockquote>
+<h3 id="431">4.3.1 目录结构</h3>
+<div class="codehilite"><pre><span></span><code>meeting-minutes/
+├── SKILL.md
+└── references/
+    ├── weekly.md            # 周会模板
+    ├── retrospective.md     # 复盘会模板
+    ├── client.md            # 客户沟通模板
+    └── all-hands.md         # 全员会模板
+</code></pre></div>
+
+<h3 id="432-skillmd">4.3.2 SKILL.md</h3>
+<div class="codehilite"><pre><span></span><code><span class="nn">---</span>
+<span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">meeting-minutes</span>
+<span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">|</span>
+<span class="w">  </span><span class="no">把会议录音/转写文本整理成结构化会议纪要。支持周会、项目复盘、客户沟通、全员会四种类型，</span>
+<span class="w">  </span><span class="no">自动识别会议类型并应用对应模板。当用户说&quot;整理会议&quot;、&quot;会议纪要&quot;、&quot;整理录音&quot;时使用。</span>
+<span class="nt">when_to_use</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">|</span>
+<span class="w">  </span><span class="no">Use this skill when the user provides meeting transcript or notes and</span>
+<span class="w">  </span><span class="no">wants structured minutes. Do NOT use for: general text summarization,</span>
+<span class="w">  </span><span class="no">or generating meeting agendas.</span>
+<span class="nt">paths</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[]</span><span class="w">   </span><span class="c1"># 不限定文件</span>
+<span class="nt">context</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">fork</span>
+<span class="nt">agent</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">general-purpose</span>
+<span class="nt">argument-hint</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;&lt;meeting-type&gt;</span><span class="nv"> </span><span class="s">&lt;transcript-or-file&gt;&quot;</span>
+<span class="nn">---</span>
+
+<span class="c1"># 会议纪要 Skill</span>
+
+<span class="c1">## 工作流程</span>
+
+<span class="c1">### Step 1：识别会议类型</span>
+
+<span class="l l-Scalar l-Scalar-Plain">读用户提供的转写文本，根据关键词判断：</span>
+
+<span class="l l-Scalar l-Scalar-Plain">| 关键词 / 模式 | 会议类型 |</span>
+<span class="l l-Scalar l-Scalar-Plain">|--------------|---------|</span>
+<span class="l l-Scalar l-Scalar-Plain">| &quot;上周&quot;、&quot;本周&quot;、&quot;下周&quot;、&quot;周会&quot;、&quot;weekly&quot; | weekly |</span>
+<span class="l l-Scalar l-Scalar-Plain">| &quot;做得好的&quot;、&quot;做得不好的&quot;、&quot;retro&quot;、&quot;复盘&quot;、&quot;总结&quot; | retrospective |</span>
+<span class="l l-Scalar l-Scalar-Plain">| &quot;客户&quot;、&quot;contract&quot;、&quot;合作&quot;、&quot;采购&quot;、&quot;需求&quot; | client |</span>
+<span class="l l-Scalar l-Scalar-Plain">| &quot;全员&quot;、&quot;all hands&quot;、&quot;公司&quot;、&quot;组织&quot; | all-hands |</span>
+
+<span class="l l-Scalar l-Scalar-Plain">如果用户明确指定了 `&lt;meeting-type&gt;`，用指定的。否则用关键词推断，仍不确定时**询问用户**。</span>
+
+<span class="l l-Scalar l-Scalar-Plain">### Step 2：加载对应模板</span>
+
+<span class="l l-Scalar l-Scalar-Plain">根据类型，**只**读取对应的 reference 文件（节省 token）：</span>
+
+<span class="l l-Scalar l-Scalar-Plain">- weekly → [references/weekly.md](references/weekly.md)</span>
+<span class="l l-Scalar l-Scalar-Plain">- retrospective → [references/retrospective.md](references/retrospective.md)</span>
+<span class="l l-Scalar l-Scalar-Plain">- client → [references/client.md](references/client.md)</span>
+<span class="l l-Scalar l-Scalar-Plain">- all-hands → [references/all-hands.md](references/all-hands.md)</span>
+
+<span class="l l-Scalar l-Scalar-Plain">### Step 3：提取关键信息</span>
+
+<span class="l l-Scalar l-Scalar-Plain">按模板的字段，从转写文本里抽取：</span>
+
+<span class="l l-Scalar l-Scalar-Plain">- **参会人**（识别每段话的发言人）</span>
+<span class="l l-Scalar l-Scalar-Plain">- **议题**（按主题分段）</span>
+<span class="l l-Scalar l-Scalar-Plain">- **决议**（&quot;决定…&quot;、&quot;确认…&quot;、&quot;agree&quot;）</span>
+<span class="l l-Scalar l-Scalar-Plain">- **行动项**（&quot;X 负责&quot;、&quot;deadline&quot;、&quot;截止&quot;、&quot;by Friday&quot;）</span>
+<span class="l l-Scalar l-Scalar-Plain">- **风险 / 阻塞**（&quot;卡在&quot;、&quot;问题&quot;、&quot;无法&quot;、&quot;blocker&quot;）</span>
+<span class="l l-Scalar l-Scalar-Plain">- **未决议**（&quot;下次讨论&quot;、&quot;待定&quot;、&quot;TBD&quot;）</span>
+
+<span class="l l-Scalar l-Scalar-Plain">### Step 4：输出</span>
+
+<span class="l l-Scalar l-Scalar-Plain">按 reference 模板的格式输出。</span>
+
+<span class="l l-Scalar l-Scalar-Plain">### Step 5：保存（可选）</span>
+
+<span class="l l-Scalar l-Scalar-Plain">询问用户是否要保存到文件。如果要：</span>
+<span class="l l-Scalar l-Scalar-Plain">- 默认保存路径：`./minutes/YYYY-MM-DD-&lt;meeting-type&gt;.md`</span>
+<span class="l l-Scalar l-Scalar-Plain">- 文件名格式：`&lt;日期&gt;-&lt;类型&gt;-&lt;可选主题&gt;.md`</span>
+
+<span class="l l-Scalar l-Scalar-Plain">## 关键决策点</span>
+
+<span class="l l-Scalar l-Scalar-Plain">- **文本很短**（&lt; 200 字） → 标注&quot;信息不完整&quot;，列出已知信息 + 缺失项</span>
+<span class="l l-Scalar l-Scalar-Plain">- **文本超长**（&gt; 5000 字） → 用 `context</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">fork` 隔离处理</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="err">*</span><span class="nv">*多个会议混在一段文本</span><span class="err">**</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">→ 让用户拆分，或按时间分章节</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="err">*</span><span class="nv">*没有发言人标识</span><span class="err">**</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">→ 标注&quot;未识别发言人&quot;，但仍尝试按主题分段</span>
+
+<span class="c1">## 错误处理</span>
+
+<span class="p p-Indicator">|</span><span class="err"> 情况 | 处理 |</span>
+<span class="p p-Indicator">|</span><span class="err">------|------|</span>
+<span class="p p-Indicator">|</span><span class="err"> 文本是空 | 提示用户提供内容 |</span>
+<span class="p p-Indicator">|</span><span class="err"> 文本不是会议（明显是别的） | 退出并提示这不是会议转写 |</span>
+<span class="p p-Indicator">|</span><span class="err"> 关键词不明确 | 列出 4 种类型让用户选 |</span>
+
+<span class="c1">## 隐私</span>
+
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="err">*</span><span class="nv">*不要</span><span class="err">*</span><span class="nv">*把会议内容传到外部服务</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="err">*</span><span class="nv">*不要</span><span class="err">*</span><span class="nv">*记录敏感信息</span><span class="l l-Scalar l-Scalar-Plain">（薪资、个人评价）到结构化字段</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">如有敏感信息，标注 `[已脱敏]`</span>
+</code></pre></div>
+
+<h3 id="433-referencesweeklymd">4.3.3 references/weekly.md</h3>
+<div class="codehilite"><pre><span></span><code><span class="gh"># 周会模板</span>
+
+<span class="gu">## 标题</span>
+<span class="sb">`周会 - YYYY-MM-DD`</span>
+
+<span class="gu">## 参会人</span>
+<span class="k">-</span><span class="w"> </span>姓名 1
+<span class="k">-</span><span class="w"> </span>姓名 2
+<span class="k">-</span><span class="w"> </span>...
+
+<span class="gu">## 上周进展（按人 / 按模块）</span>
+
+<span class="gu">### 姓名 1</span>
+<span class="k">-</span><span class="w"> </span>✅ 完成项 1
+<span class="k">-</span><span class="w"> </span>✅ 完成项 2
+<span class="k">-</span><span class="w"> </span>🚧 进行中：xxx
+
+<span class="gu">### 姓名 2</span>
+<span class="k">-</span><span class="w"> </span>...
+
+<span class="gu">## 本周计划</span>
+
+<span class="gu">### 姓名 1</span>
+<span class="k">-</span><span class="w"> </span>计划 1
+<span class="k">-</span><span class="w"> </span>计划 2
+
+<span class="gu">## 阻塞 / 风险</span>
+
+<span class="k">-</span><span class="w"> </span>阻塞项（谁卡在什么上）
+<span class="k">-</span><span class="w"> </span>需要的支持
+
+<span class="gu">## 决议</span>
+
+<span class="k">-</span><span class="w"> </span>决议 1
+<span class="k">-</span><span class="w"> </span>决议 2
+
+<span class="gu">## 行动项</span>
+
+| 行动 | 负责人 | 截止日期 |
+|------|--------|---------|
+| xxx | 张三 | 2026-06-20 |
+</code></pre></div>
+
+<h3 id="434-referencesretrospectivemd">4.3.4 references/retrospective.md</h3>
+<div class="codehilite"><pre><span></span><code><span class="gh"># 复盘会模板</span>
+
+<span class="gu">## 标题</span>
+<span class="sb">`复盘 - &lt;项目名&gt; - YYYY-MM-DD`</span>
+
+<span class="gu">## 项目概述</span>
+一段话说明项目背景和目标。
+
+<span class="gu">## 做得好的（Keep / 继续做）</span>
+
+<span class="k">-</span><span class="w"> </span>xxx
+<span class="k">-</span><span class="w"> </span>xxx
+
+<span class="gu">## 做得不好的（Drop / 不再做）</span>
+
+<span class="k">-</span><span class="w"> </span>xxx
+<span class="k">-</span><span class="w"> </span>xxx
+
+<span class="gu">## 改进项（Try / 下次尝试）</span>
+
+| 改进项 | 负责人 | 验证方式 |
+|--------|--------|---------|
+| xxx | xxx | 怎么做算成功 |
+
+<span class="gu">## 关键数据</span>
+
+<span class="k">-</span><span class="w"> </span>周期：N 天
+<span class="k">-</span><span class="w"> </span>投入：N 人日
+<span class="k">-</span><span class="w"> </span>主要里程碑：xxx
+
+<span class="gu">## 下一步</span>
+
+<span class="k">-</span><span class="w"> </span>下一阶段：xxx
+<span class="k">-</span><span class="w"> </span>启动日期：xxx
+</code></pre></div>
+
+<h3 id="435-referencesclientmd">4.3.5 references/client.md</h3>
+<div class="codehilite"><pre><span></span><code><span class="gh"># 客户沟通模板</span>
+
+<span class="gu">## 标题</span>
+<span class="sb">`&lt;客户名&gt;沟通 - YYYY-MM-DD`</span>
+
+<span class="gu">## 参会人</span>
+
+<span class="gu">### 我方</span>
+<span class="k">-</span><span class="w"> </span>姓名 1（角色）
+<span class="k">-</span><span class="w"> </span>姓名 2（角色）
+
+<span class="gu">### 客户方</span>
+<span class="k">-</span><span class="w"> </span>姓名 1（职位）
+
+<span class="gu">## 客户诉求 / 问题</span>
+
+<span class="k">-</span><span class="w"> </span>问题 1
+<span class="k">-</span><span class="w"> </span>问题 2
+
+<span class="gu">## 我们给出的方案 / 回应</span>
+
+<span class="k">-</span><span class="w"> </span>方案 1
+<span class="k">-</span><span class="w"> </span>方案 2
+
+<span class="gu">## 客户反馈</span>
+
+<span class="k">-</span><span class="w"> </span>接受 / 拒绝 / 待定
+<span class="k">-</span><span class="w"> </span>进一步问题
+
+<span class="gu">## 行动项</span>
+
+| 行动 | 负责人 | 截止日期 |
+|------|--------|---------|
+| xxx | 我方-张三 | 2026-06-20 |
+| xxx | 客户-李四 | 2026-06-25 |
+
+<span class="gu">## 商务要点</span>
+
+<span class="k">-</span><span class="w"> </span>价格：xxx
+<span class="k">-</span><span class="w"> </span>时间线：xxx
+<span class="k">-</span><span class="w"> </span>关键条款：xxx
+
+<span class="gu">## 风险</span>
+
+<span class="k">-</span><span class="w"> </span>风险 1（应对：xxx）
+
+<span class="gu">## 下次沟通</span>
+
+<span class="k">-</span><span class="w"> </span>时间：
+<span class="k">-</span><span class="w"> </span>议程：
+</code></pre></div>
+
+<h3 id="436-referencesall-handsmd">4.3.6 references/all-hands.md</h3>
+<div class="codehilite"><pre><span></span><code><span class="gh"># 全员会模板</span>
+
+<span class="gu">## 标题</span>
+<span class="sb">`全员会 - YYYY-MM-DD`</span>
+
+<span class="gu">## 议程</span>
+
+<span class="k">1.</span> 开场（CEO）
+<span class="k">2.</span> 业务进展
+<span class="k">3.</span> 重点项目
+<span class="k">4.</span> 人事变动
+<span class="k">5.</span> Q&amp;A
+
+<span class="gu">## 业务进展</span>
+
+<span class="k">-</span><span class="w"> </span>关键指标：xxx
+<span class="k">-</span><span class="w"> </span>重点成果：xxx
+<span class="k">-</span><span class="w"> </span>主要挑战：xxx
+
+<span class="gu">## 重点项目</span>
+
+<span class="gu">### 项目 1</span>
+<span class="k">-</span><span class="w"> </span>状态：在轨 / 风险 / 阻塞
+<span class="k">-</span><span class="w"> </span>下一步：xxx
+
+<span class="gu">## 人事变动</span>
+
+<span class="k">-</span><span class="w"> </span>新加入：xxx
+<span class="k">-</span><span class="w"> </span>晋升：xxx
+<span class="k">-</span><span class="w"> </span>离职：xxx
+
+<span class="gu">## Q&amp;A（重点）</span>
+
+<span class="k">-</span><span class="w"> </span>Q：xxx — A：xxx
+<span class="k">-</span><span class="w"> </span>Q：xxx — A：xxx
+</code></pre></div>
+
+<h3 id="437">4.3.7 测试</h3>
+<div class="codehilite"><pre><span></span><code><span class="c1"># 在 Claude Code 中触发</span>
+&gt;<span class="w"> </span>/meeting-minutes<span class="w"> </span>weekly
+&gt;<span class="w"> </span>把这段会议录音整理成纪要：
+&gt;<span class="w"> </span><span class="o">[</span>粘贴转写文本<span class="o">]</span>
+</code></pre></div>
+
+<hr />
+<h2 id="44-api-skill-pythonapi">4.4 · api-skill-python（API 集成）</h2>
+<blockquote>
+<p><strong>场景</strong>：通过 Anthropic Python SDK 把 skill 集成到自己的应用里。<br />
+<strong>价值</strong>：体现完整的 Messages API + Files API + Code Execution 流程。</p>
+</blockquote>
+<h3 id="441-python">4.4.1 完整的 Python 集成代码</h3>
+<div class="codehilite"><pre><span></span><code><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">api_skill_demo.py</span>
+<span class="sd">演示如何用 Anthropic Python SDK 集成自定义 Skill</span>
+<span class="sd">需要：anthropic &gt;= 0.40.0</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">anthropic</span><span class="w"> </span><span class="kn">import</span> <span class="n">Anthropic</span>
+
+<span class="c1"># ============ 配置 ============</span>
+<span class="n">client</span> <span class="o">=</span> <span class="n">Anthropic</span><span class="p">(</span><span class="n">api_key</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s2">&quot;ANTHROPIC_API_KEY&quot;</span><span class="p">])</span>
+
+<span class="c1"># ============ Step 1：上传 Skill ============</span>
+<span class="c1"># 注意：skill 必须打包成 zip 格式上传</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">upload_skill</span><span class="p">(</span><span class="n">skill_dir</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">skill_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;上传一个 skill 目录，返回 skill_id&quot;&quot;&quot;</span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">zipfile</span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">tempfile</span>
+
+    <span class="n">skill_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">skill_dir</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">skill_path</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+        <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Skill directory not found: </span><span class="si">{</span><span class="n">skill_dir</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="c1"># 打包成 zip</span>
+    <span class="k">with</span> <span class="n">tempfile</span><span class="o">.</span><span class="n">NamedTemporaryFile</span><span class="p">(</span><span class="n">suffix</span><span class="o">=</span><span class="s2">&quot;.zip&quot;</span><span class="p">,</span> <span class="n">delete</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span> <span class="k">as</span> <span class="n">tmp</span><span class="p">:</span>
+        <span class="n">zip_path</span> <span class="o">=</span> <span class="n">tmp</span><span class="o">.</span><span class="n">name</span>
+
+    <span class="k">with</span> <span class="n">zipfile</span><span class="o">.</span><span class="n">ZipFile</span><span class="p">(</span><span class="n">zip_path</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">,</span> <span class="n">zipfile</span><span class="o">.</span><span class="n">ZIP_DEFLATED</span><span class="p">)</span> <span class="k">as</span> <span class="n">zf</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">file</span> <span class="ow">in</span> <span class="n">skill_path</span><span class="o">.</span><span class="n">rglob</span><span class="p">(</span><span class="s2">&quot;*&quot;</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">file</span><span class="o">.</span><span class="n">is_file</span><span class="p">():</span>
+                <span class="n">arcname</span> <span class="o">=</span> <span class="n">file</span><span class="o">.</span><span class="n">relative_to</span><span class="p">(</span><span class="n">skill_path</span><span class="p">)</span>
+                <span class="n">zf</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="n">arcname</span><span class="p">)</span>
+
+    <span class="c1"># 上传</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">zip_path</span><span class="p">,</span> <span class="s2">&quot;rb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="n">skill</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">beta</span><span class="o">.</span><span class="n">skills</span><span class="o">.</span><span class="n">create</span><span class="p">(</span>
+            <span class="n">name</span><span class="o">=</span><span class="n">skill_name</span><span class="p">,</span>
+            <span class="n">skill_data</span><span class="o">=</span><span class="n">f</span><span class="p">,</span>
+            <span class="n">betas</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;skills-2025-01-01&quot;</span><span class="p">]</span>
+        <span class="p">)</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;✓ Skill uploaded: </span><span class="si">{</span><span class="n">skill</span><span class="o">.</span><span class="n">id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Name: </span><span class="si">{</span><span class="n">skill</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Version: </span><span class="si">{</span><span class="n">skill</span><span class="o">.</span><span class="n">version</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="n">os</span><span class="o">.</span><span class="n">unlink</span><span class="p">(</span><span class="n">zip_path</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">skill</span><span class="o">.</span><span class="n">id</span>
+
+
+<span class="c1"># ============ Step 2：调用带 Skill 的对话 ============</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">chat_with_skill</span><span class="p">(</span>
+    <span class="n">skill_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">user_message</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">upload_files</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    用指定 skill 进行对话</span>
+<span class="sd">    upload_files: 需要一并上传到沙箱的文件列表</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># 1. 上传输入文件</span>
+    <span class="n">file_ids</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">if</span> <span class="n">upload_files</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">file_path</span> <span class="ow">in</span> <span class="n">upload_files</span><span class="p">:</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">file_path</span><span class="p">,</span> <span class="s2">&quot;rb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+                <span class="n">file_obj</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">beta</span><span class="o">.</span><span class="n">files</span><span class="o">.</span><span class="n">upload</span><span class="p">(</span>
+                    <span class="n">file</span><span class="o">=</span><span class="n">f</span><span class="p">,</span>
+                    <span class="n">betas</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;files-api-2025-04-14&quot;</span><span class="p">]</span>
+                <span class="p">)</span>
+                <span class="n">file_ids</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">file_obj</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
+                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;✓ File uploaded: </span><span class="si">{</span><span class="n">file_obj</span><span class="o">.</span><span class="n">id</span><span class="si">}</span><span class="s2"> (</span><span class="si">{</span><span class="n">file_path</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">)</span>
+
+    <span class="c1"># 2. 构造消息</span>
+    <span class="n">message_content</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">fid</span> <span class="ow">in</span> <span class="n">file_ids</span><span class="p">:</span>
+        <span class="n">message_content</span><span class="o">.</span><span class="n">append</span><span class="p">({</span>
+            <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;file&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;file&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;file_id&quot;</span><span class="p">:</span> <span class="n">fid</span><span class="p">}</span>
+        <span class="p">})</span>
+    <span class="n">message_content</span><span class="o">.</span><span class="n">append</span><span class="p">({</span>
+        <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;text&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;text&quot;</span><span class="p">:</span> <span class="n">user_message</span>
+    <span class="p">})</span>
+
+    <span class="c1"># 3. 调用 Messages API</span>
+    <span class="n">response</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">beta</span><span class="o">.</span><span class="n">messages</span><span class="o">.</span><span class="n">create</span><span class="p">(</span>
+        <span class="n">model</span><span class="o">=</span><span class="s2">&quot;claude-sonnet-4-5&quot;</span><span class="p">,</span>
+        <span class="n">max_tokens</span><span class="o">=</span><span class="mi">4096</span><span class="p">,</span>
+        <span class="n">betas</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;code-execution-2025-01-01&quot;</span><span class="p">,</span> <span class="s2">&quot;skills-2025-01-01&quot;</span><span class="p">,</span> <span class="s2">&quot;files-api-2025-04-14&quot;</span><span class="p">],</span>
+        <span class="n">skills</span><span class="o">=</span><span class="p">[</span>
+            <span class="p">{</span>
+                <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;custom&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;skill_id&quot;</span><span class="p">:</span> <span class="n">skill_id</span><span class="p">,</span>
+                <span class="s2">&quot;version&quot;</span><span class="p">:</span> <span class="s2">&quot;latest&quot;</span>
+            <span class="p">}</span>
+        <span class="p">],</span>
+        <span class="n">tools</span><span class="o">=</span><span class="p">[</span>
+            <span class="p">{</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;code_execution_20250101&quot;</span><span class="p">,</span> <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;code_execution&quot;</span><span class="p">}</span>
+        <span class="p">],</span>
+        <span class="n">messages</span><span class="o">=</span><span class="p">[</span>
+            <span class="p">{</span>
+                <span class="s2">&quot;role&quot;</span><span class="p">:</span> <span class="s2">&quot;user&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;content&quot;</span><span class="p">:</span> <span class="n">message_content</span>
+            <span class="p">}</span>
+        <span class="p">]</span>
+    <span class="p">)</span>
+
+    <span class="c1"># 4. 提取文本响应</span>
+    <span class="n">text_parts</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">block</span> <span class="ow">in</span> <span class="n">response</span><span class="o">.</span><span class="n">content</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">block</span><span class="p">,</span> <span class="s2">&quot;text&quot;</span><span class="p">):</span>
+            <span class="n">text_parts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">block</span><span class="o">.</span><span class="n">text</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">block</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="s2">&quot;bash_code_execution_tool_result&quot;</span><span class="p">:</span>
+            <span class="c1"># 提取沙箱中生成的文件</span>
+            <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">block</span><span class="p">,</span> <span class="s2">&quot;content&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">block</span><span class="o">.</span><span class="n">content</span><span class="p">,</span> <span class="s2">&quot;content&quot;</span><span class="p">):</span>
+                <span class="k">for</span> <span class="n">result_block</span> <span class="ow">in</span> <span class="n">block</span><span class="o">.</span><span class="n">content</span><span class="o">.</span><span class="n">content</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">result_block</span><span class="p">,</span> <span class="s2">&quot;file_id&quot;</span><span class="p">):</span>
+                        <span class="n">text_parts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;[Generated file: </span><span class="si">{</span><span class="n">result_block</span><span class="o">.</span><span class="n">file_id</span><span class="si">}</span><span class="s2">]&quot;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">text_parts</span><span class="p">)</span>
+
+
+<span class="c1"># ============ Step 3：下载沙箱输出文件 ============</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">download_file</span><span class="p">(</span><span class="n">file_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">output_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;从沙箱下载生成的文件&quot;&quot;&quot;</span>
+    <span class="n">file_content</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">beta</span><span class="o">.</span><span class="n">files</span><span class="o">.</span><span class="n">download</span><span class="p">(</span>
+        <span class="n">file_id</span><span class="o">=</span><span class="n">file_id</span><span class="p">,</span>
+        <span class="n">betas</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;files-api-2025-04-14&quot;</span><span class="p">]</span>
+    <span class="p">)</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">output_path</span><span class="p">,</span> <span class="s2">&quot;wb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="n">file_content</span><span class="o">.</span><span class="n">write_to_file</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;✓ Downloaded: </span><span class="si">{</span><span class="n">output_path</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+
+<span class="c1"># ============ 演示 ============</span>
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="c1"># 1. 上传 PDF 填表 skill</span>
+    <span class="n">skill_id</span> <span class="o">=</span> <span class="n">upload_skill</span><span class="p">(</span>
+        <span class="n">skill_dir</span><span class="o">=</span><span class="s2">&quot;./pdf-form-filler&quot;</span><span class="p">,</span>
+        <span class="n">skill_name</span><span class="o">=</span><span class="s2">&quot;PDF Form Filler&quot;</span>
+    <span class="p">)</span>
+
+    <span class="c1"># 2. 用 skill 处理 PDF</span>
+    <span class="n">response</span> <span class="o">=</span> <span class="n">chat_with_skill</span><span class="p">(</span>
+        <span class="n">skill_id</span><span class="o">=</span><span class="n">skill_id</span><span class="p">,</span>
+        <span class="n">user_message</span><span class="o">=</span><span class="s2">&quot;请帮我填这个 PDF 表单，first_name=张, last_name=三, email=zhang@example.com&quot;</span><span class="p">,</span>
+        <span class="n">upload_files</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;./sample-form.pdf&quot;</span><span class="p">]</span>
+    <span class="p">)</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="s2">&quot;=&quot;</span> <span class="o">*</span> <span class="mi">60</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Claude&#39;s Response:&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;=&quot;</span> <span class="o">*</span> <span class="mi">60</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">response</span><span class="p">)</span>
+</code></pre></div>
+
+<h3 id="442">4.4.2 流式响应版本</h3>
+<div class="codehilite"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">chat_with_skill_streaming</span><span class="p">(</span><span class="n">skill_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">user_message</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;流式响应版本&quot;&quot;&quot;</span>
+    <span class="k">with</span> <span class="n">client</span><span class="o">.</span><span class="n">beta</span><span class="o">.</span><span class="n">messages</span><span class="o">.</span><span class="n">stream</span><span class="p">(</span>
+        <span class="n">model</span><span class="o">=</span><span class="s2">&quot;claude-sonnet-4-5&quot;</span><span class="p">,</span>
+        <span class="n">max_tokens</span><span class="o">=</span><span class="mi">4096</span><span class="p">,</span>
+        <span class="n">betas</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;code-execution-2025-01-01&quot;</span><span class="p">,</span> <span class="s2">&quot;skills-2025-01-01&quot;</span><span class="p">],</span>
+        <span class="n">skills</span><span class="o">=</span><span class="p">[{</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;custom&quot;</span><span class="p">,</span> <span class="s2">&quot;skill_id&quot;</span><span class="p">:</span> <span class="n">skill_id</span><span class="p">,</span> <span class="s2">&quot;version&quot;</span><span class="p">:</span> <span class="s2">&quot;latest&quot;</span><span class="p">}],</span>
+        <span class="n">tools</span><span class="o">=</span><span class="p">[{</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;code_execution_20250101&quot;</span><span class="p">,</span> <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;code_execution&quot;</span><span class="p">}],</span>
+        <span class="n">messages</span><span class="o">=</span><span class="p">[{</span><span class="s2">&quot;role&quot;</span><span class="p">:</span> <span class="s2">&quot;user&quot;</span><span class="p">,</span> <span class="s2">&quot;content&quot;</span><span class="p">:</span> <span class="n">user_message</span><span class="p">}]</span>
+    <span class="p">)</span> <span class="k">as</span> <span class="n">stream</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">text</span> <span class="ow">in</span> <span class="n">stream</span><span class="o">.</span><span class="n">text_stream</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">flush</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">()</span>
+</code></pre></div>
+
+<h3 id="443-skill">4.4.3 列出与管理 Skill</h3>
+<div class="codehilite"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">list_my_skills</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;列出我创建的所有 skill&quot;&quot;&quot;</span>
+    <span class="n">skills</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">beta</span><span class="o">.</span><span class="n">skills</span><span class="o">.</span><span class="n">list</span><span class="p">(</span><span class="n">betas</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;skills-2025-01-01&quot;</span><span class="p">])</span>
+    <span class="k">for</span> <span class="n">skill</span> <span class="ow">in</span> <span class="n">skills</span><span class="o">.</span><span class="n">data</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;- </span><span class="si">{</span><span class="n">skill</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2"> (</span><span class="si">{</span><span class="n">skill</span><span class="o">.</span><span class="n">id</span><span class="si">}</span><span class="s2">) - version </span><span class="si">{</span><span class="n">skill</span><span class="o">.</span><span class="n">version</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">get_skill_versions</span><span class="p">(</span><span class="n">skill_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;查看 skill 的版本历史&quot;&quot;&quot;</span>
+    <span class="n">versions</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">beta</span><span class="o">.</span><span class="n">skills</span><span class="o">.</span><span class="n">versions</span><span class="o">.</span><span class="n">list</span><span class="p">(</span>
+        <span class="n">skill_id</span><span class="o">=</span><span class="n">skill_id</span><span class="p">,</span>
+        <span class="n">betas</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;skills-2025-01-01&quot;</span><span class="p">]</span>
+    <span class="p">)</span>
+    <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">versions</span><span class="o">.</span><span class="n">data</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;- </span><span class="si">{</span><span class="n">v</span><span class="o">.</span><span class="n">version</span><span class="si">}</span><span class="s2"> (created: </span><span class="si">{</span><span class="n">v</span><span class="o">.</span><span class="n">created_at</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">)</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">delete_skill</span><span class="p">(</span><span class="n">skill_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;删除一个 skill&quot;&quot;&quot;</span>
+    <span class="n">client</span><span class="o">.</span><span class="n">beta</span><span class="o">.</span><span class="n">skills</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span>
+        <span class="n">skill_id</span><span class="o">=</span><span class="n">skill_id</span><span class="p">,</span>
+        <span class="n">betas</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;skills-2025-01-01&quot;</span><span class="p">]</span>
+    <span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;✓ Skill deleted: </span><span class="si">{</span><span class="n">skill_id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</code></pre></div>
+
+<h3 id="444">4.4.4 错误处理</h3>
+<div class="codehilite"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">anthropic</span><span class="w"> </span><span class="kn">import</span> <span class="n">APIError</span><span class="p">,</span> <span class="n">APIConnectionError</span><span class="p">,</span> <span class="n">RateLimitError</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">safe_chat_with_skill</span><span class="p">(</span><span class="n">skill_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">user_message</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">max_retries</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">3</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;带错误处理和重试的版本&quot;&quot;&quot;</span>
+    <span class="k">for</span> <span class="n">attempt</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">max_retries</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">chat_with_skill</span><span class="p">(</span><span class="n">skill_id</span><span class="p">,</span> <span class="n">user_message</span><span class="p">)</span>
+        <span class="k">except</span> <span class="n">RateLimitError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">attempt</span> <span class="o">&lt;</span> <span class="n">max_retries</span> <span class="o">-</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">wait</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">**</span> <span class="n">attempt</span>
+                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;⏳ Rate limited, waiting </span><span class="si">{</span><span class="n">wait</span><span class="si">}</span><span class="s2">s...&quot;</span><span class="p">)</span>
+                <span class="kn">import</span><span class="w"> </span><span class="nn">time</span>
+                <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="n">wait</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span>
+        <span class="k">except</span> <span class="n">APIConnectionError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;⚠️ Connection error: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">raise</span>
+        <span class="k">except</span> <span class="n">APIError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;⚠️ API error: </span><span class="si">{</span><span class="n">e</span><span class="o">.</span><span class="n">status_code</span><span class="si">}</span><span class="s2"> - </span><span class="si">{</span><span class="n">e</span><span class="o">.</span><span class="n">message</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">raise</span>
+</code></pre></div>
+
+<h3 id="445">4.4.5 环境配置</h3>
+<div class="codehilite"><pre><span></span><code><span class="c1"># .env</span>
+<span class="nv">ANTHROPIC_API_KEY</span><span class="o">=</span>sk-ant-...
+
+<span class="c1"># 安装</span>
+pip<span class="w"> </span>install<span class="w"> </span>anthropic<span class="w"> </span>python-dotenv
+</code></pre></div>
+
+<h3 id="446">4.4.6 完整运行</h3>
+<div class="codehilite"><pre><span></span><code><span class="c1"># 1. 准备 skill 目录</span>
+cp<span class="w"> </span>-r<span class="w"> </span>examples/pdf-form-filler<span class="w"> </span>./
+
+<span class="c1"># 2. 准备测试 PDF</span>
+<span class="c1"># （用一个简单的 PDF 表单）</span>
+
+<span class="c1"># 3. 运行</span>
+python<span class="w"> </span>api_skill_demo.py
+</code></pre></div>
+
+<hr />
+<h2 id="45">4.5 四个示例对比</h2>
+<table>
+<thead>
+<tr>
+<th>维度</th>
+<th>pdf-form-filler</th>
+<th>code-review</th>
+<th>meeting-minutes</th>
+<th>api-skill-python</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>主题</td>
+<td>PDF 处理</td>
+<td>代码审查</td>
+<td>中文会议</td>
+<td>API 集成</td>
+</tr>
+<tr>
+<td>难度</td>
+<td>⭐⭐</td>
+<td>⭐⭐⭐</td>
+<td>⭐⭐⭐</td>
+<td>⭐⭐⭐⭐</td>
+</tr>
+<tr>
+<td>L1 触发方式</td>
+<td>关键词 + paths 过滤</td>
+<td>paths 过滤</td>
+<td>关键词</td>
+<td>程序化</td>
+</tr>
+<tr>
+<td>L2 复杂度</td>
+<td>中等</td>
+<td>高</td>
+<td>中等</td>
+<td>中等</td>
+</tr>
+<tr>
+<td>L3 资源</td>
+<td>scripts + references</td>
+<td>references</td>
+<td>多 references</td>
+<td>外部 API</td>
+</tr>
+<tr>
+<td>关键技巧</td>
+<td>scripts 抽逻辑</td>
+<td>paths + allowed-tools</td>
+<td>多 reference 按需</td>
+<td>Files API + 流式</td>
+</tr>
+<tr>
+<td>用户场景</td>
+<td>偶尔用</td>
+<td>经常用</td>
+<td>经常用</td>
+<td>开发者集成</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="46">4.6 接下来</h2>
+<ul>
+<li>想看怎么从 Claude Code 调到 API → <a href="./05-api.html">第 5 章 · API 集成</a></li>
+<li>想搞懂怎么设计 Skill 体系 → <a href="./06-design.html">第 6 章 · 体系设计</a></li>
+<li>触发不准想排查 → <a href="./08-debug.html">第 8 章 · 调试与反模式</a></li>
+</ul>
+    </article>
+</div>
+
+<a href="#" class="back-to-top" id="backToTop" title="返回顶部">↑</a>
+
+<footer>
+    <p>learn-skills · 基于 Anthropic Agent Skills 官方文档整理 · 2026-06</p>
+    <p>Skill 机制持续演进，请以 <a href="https://docs.claude.com/en/docs/agents-and-tools/agent-skills/overview">官方文档</a> 为准</p>
+</footer>
+
+<script>
+// 滚动出现"返回顶部"按钮
+const backBtn = document.getElementById('backToTop');
+window.addEventListener('scroll', () => {
+    backBtn.classList.toggle('visible', window.scrollY > 400);
+});
+backBtn.addEventListener('click', e => {
+    e.preventDefault();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+});
+
+// 当前滚动位置高亮 TOC
+const tocLinks = document.querySelectorAll('.toc a');
+const headings = Array.from(tocLinks).map(a => document.getElementById(a.getAttribute('href').slice(1)));
+if (headings.length > 0) {
+    window.addEventListener('scroll', () => {
+        const offset = 100;
+        let activeIdx = 0;
+        for (let i = 0; i < headings.length; i++) {
+            if (headings[i] && headings[i].offsetTop - offset < window.scrollY) {
+                activeIdx = i;
+            }
+        }
+        tocLinks.forEach((a, i) => {
+            a.classList.toggle('active', i === activeIdx);
+        });
+    });
+}
+</script>
+</body>
+</html>

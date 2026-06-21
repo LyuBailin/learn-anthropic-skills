@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>learn-skills · 完整掌握 Anthropic Agent Skills</title>
+<style>
+  :root {
+    --bg: #0e1117;
+    --panel: #161b22;
+    --panel-2: #1c2230;
+    --border: #30363d;
+    --text: #e6edf3;
+    --muted: #9ba3af;
+    --accent: #f59e0b;
+    --accent-2: #38bdf8;
+    --good: #10b981;
+    --warn: #ef4444;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: -apple-system, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+  }
+  .container { max-width: 1100px; margin: 0 auto; padding: 32px 24px; }
+  header.hero {
+    padding: 48px 32px;
+    background: linear-gradient(135deg, rgba(245,158,11,0.12), rgba(56,189,248,0.08));
+    border-bottom: 1px solid var(--border);
+    border-radius: 16px;
+    margin-bottom: 32px;
+  }
+  header.hero h1 { font-size: 2.4rem; margin: 0 0 12px; letter-spacing: -0.02em; }
+  header.hero p { color: var(--muted); font-size: 1.05rem; max-width: 720px; }
+  .tag {
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 999px;
+    background: rgba(245,158,11,0.15);
+    color: var(--accent);
+    font-size: 0.78rem;
+    font-weight: 600;
+    margin-right: 6px;
+  }
+  nav.toc {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px 24px;
+    margin-bottom: 32px;
+  }
+  nav.toc h2 { margin-top: 0; font-size: 1.1rem; color: var(--accent-2); }
+  nav.toc ol { padding-left: 22px; margin: 0; }
+  nav.toc li { margin: 6px 0; }
+  nav.toc a { color: var(--text); text-decoration: none; }
+  nav.toc a:hover { color: var(--accent); }
+  .chapters {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 16px;
+    margin-bottom: 40px;
+  }
+  .card {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+    transition: transform 0.15s, border-color 0.15s;
+  }
+  .card:hover { transform: translateY(-2px); border-color: var(--accent); }
+  .card .num {
+    font-size: 0.78rem;
+    color: var(--muted);
+    font-weight: 600;
+    letter-spacing: 0.05em;
+  }
+  .card h3 { margin: 4px 0 8px; font-size: 1.1rem; }
+  .card p { color: var(--muted); font-size: 0.92rem; margin: 0 0 12px; }
+  .card a {
+    color: var(--accent);
+    text-decoration: none;
+    font-size: 0.88rem;
+    font-weight: 600;
+  }
+  .meta { color: var(--muted); font-size: 0.82rem; margin-top: 8px; }
+  section.example {
+    background: var(--panel-2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 32px;
+  }
+  section.example h2 { margin-top: 0; }
+  table { width: 100%; border-collapse: collapse; margin: 12px 0; }
+  th, td { text-align: left; padding: 10px 12px; border-bottom: 1px solid var(--border); font-size: 0.93rem; }
+  th { color: var(--accent-2); font-weight: 600; }
+  code {
+    background: rgba(255,255,255,0.06);
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 0.88em;
+    font-family: "JetBrains Mono", "Consolas", monospace;
+  }
+  pre {
+    background: #0a0d12;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 14px 18px;
+    overflow-x: auto;
+    font-size: 0.86rem;
+  }
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  @media (max-width: 700px) { .grid-2 { grid-template-columns: 1fr; } }
+  .callout {
+    border-left: 4px solid var(--accent);
+    background: rgba(245,158,11,0.06);
+    padding: 12px 16px;
+    border-radius: 6px;
+    margin: 16px 0;
+    font-size: 0.93rem;
+  }
+  footer { color: var(--muted); font-size: 0.85rem; text-align: center; padding: 24px 0; border-top: 1px solid var(--border); margin-top: 32px; }
+  a { color: var(--accent-2); }
+</style>
+</head>
+<body>
+<div class="container">
+
+<header class="hero">
+  <span class="tag">Anthropic Agent Skills</span>
+  <span class="tag">2026-06 更新</span>
+  <h1>learn-skills</h1>
+  <p>从零开始，系统性理解、设计、编写、调试 Agent Skills 机制。配套示例、API 集成、体系设计，一站式掌握。</p>
+</header>
+
+<nav class="toc">
+  <h2>目录</h2>
+  <ol>
+    <li><a href="01-concept.html">概念入门：什么是 Skill，跟别人什么区别</a></li>
+    <li><a href="02-anatomy.html">文件解剖：SKILL.md 完整解读</a></li>
+    <li><a href="03-loading.html">加载机制：三层披露 + 触发决策</a></li>
+    <li><a href="04-writing.html">实战编写：4 个完整可运行示例</a></li>
+    <li><a href="05-api.html">API 集成：Messages API + Files API + SDK</a></li>
+    <li><a href="06-design.html">体系设计：多 Skill 架构、版本、监控</a></li>
+    <li><a href="07-ecosystem.html">生态对照：Minimax Code / Cursor / Claude.ai / Trae</a></li>
+    <li><a href="08-debug.html">调试与反模式：常见坑 + 排查方法</a></li>
+  </ol>
+</nav>
+
+<section class="example">
+  <h2>核心速查（5 分钟上手）</h2>
+  <p><strong>Skill = 一份带元数据的操作手册</strong>，给 AI 的"入职指南"。</p>
+  <pre><code>my-skill/
+├── SKILL.md              # 必须：YAML frontmatter + Markdown 主体
+├── scripts/              # 可选：可执行脚本
+├── references/           # 可选：参考文档
+└── assets/               # 可选：模板、图片、字体</code></pre>
+  <p>Claude 启动时<strong>只把每个 Skill 的 <code>name</code> + <code>description</code></strong> 注入上下文，匹配时再读完整内容。装 100 个 Skill，日常对话也只占 1 万词左右。</p>
+  <div class="callout">
+    <strong>触发</strong>：自动（<code>description</code> 语义匹配）或手动（<code>/skill-name</code>）。<br>
+    <strong>作用域</strong>：企业 &gt; 个人 &gt; 项目 &gt; 插件。<br>
+    <strong>对比</strong>：Skill 教 AI 做事（手册）；MCP 给 AI 工具（USB-C）；Sub-agent 是另一个 LLM。
+  </div>
+</section>
+
+<h2 style="font-size:1.4rem; margin-bottom:12px;">章节</h2>
+<div class="chapters">
+
+  <div class="card" id="ch1">
+    <span class="num">CHAPTER 01</span>
+    <h3>概念入门</h3>
+    <p>Skill 是什么？跟 system prompt、tool、sub-agent 的本质区别。</p>
+    <a href="01-concept.html">开始阅读 →</a>
+    <div class="meta">~ 15 分钟 · 入门</div>
+  </div>
+
+  <div class="card" id="ch2">
+    <span class="num">CHAPTER 02</span>
+    <h3>文件解剖</h3>
+    <p>SKILL.md 完整拆解：YAML frontmatter 全部字段、Markdown 主体组织、资源文件引用。</p>
+    <a href="02-anatomy.html">开始阅读 →</a>
+    <div class="meta">~ 25 分钟 · 核心</div>
+  </div>
+
+  <div class="card" id="ch3">
+    <span class="num">CHAPTER 03</span>
+    <h3>加载机制</h3>
+    <p>三层渐进式披露如何工作、token 经济性、Claude 如何决策触发哪个 Skill。</p>
+    <a href="03-loading.html">开始阅读 →</a>
+    <div class="meta">~ 20 分钟 · 核心</div>
+  </div>
+
+  <div class="card" id="ch4">
+    <span class="num">CHAPTER 04</span>
+    <h3>实战编写</h3>
+    <p>4 个完整可运行示例：PDF 表单 / 代码审查 / 会议纪要 / API 集成。</p>
+    <a href="04-writing.html">开始阅读 →</a>
+    <div class="meta">~ 40 分钟 · 实践</div>
+  </div>
+
+  <div class="card" id="ch5">
+    <span class="num">CHAPTER 05</span>
+    <h3>API 集成</h3>
+    <p>Messages API + Files API + Code Execution Tool 配合使用 Skill 的完整流程。</p>
+    <a href="05-api.html">开始阅读 →</a>
+    <div class="meta">~ 30 分钟 · 进阶</div>
+  </div>
+
+  <div class="card" id="ch6">
+    <span class="num">CHAPTER 06</span>
+    <h3>体系设计</h3>
+    <p>多 Skill 协同、命名空间、版本管理、监控、与 MCP / Sub-agent 的边界。</p>
+    <a href="06-design.html">开始阅读 →</a>
+    <div class="meta">~ 30 分钟 · 架构</div>
+  </div>
+
+  <div class="card" id="ch7">
+    <span class="num">CHAPTER 07</span>
+    <h3>生态对照</h3>
+    <p>Minimax Code、Cursor、Claude.ai、Trae、Codex 各自怎么实现 Skill。</p>
+    <a href="07-ecosystem.html">开始阅读 →</a>
+    <div class="meta">~ 20 分钟 · 横向</div>
+  </div>
+
+  <div class="card" id="ch8">
+    <span class="num">CHAPTER 08</span>
+    <h3>调试与反模式</h3>
+    <p>Skill 不触发、误触发、性能问题、token 浪费——怎么排查和修复。</p>
+    <a href="08-debug.html">开始阅读 →</a>
+    <div class="meta">~ 20 分钟 · 实战</div>
+  </div>
+
+</div>
+
+<section class="example">
+  <h2>frontmatter 速查表</h2>
+  <table>
+    <thead>
+      <tr><th>字段</th><th>必填</th><th>作用</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>name</code></td><td>✓</td><td>Skill 名称（小写字母/数字/连字符，≤64字符）</td></tr>
+      <tr><td><code>description</code></td><td>✓</td><td>触发描述，Claude 据此判断是否调用</td></tr>
+      <tr><td><code>when_to_use</code></td><td></td><td>补充触发条件（自然语言）</td></tr>
+      <tr><td><code>paths</code></td><td></td><td>glob 路径过滤，限定适用文件范围</td></tr>
+      <tr><td><code>allowed-tools</code></td><td></td><td>工具白名单</td></tr>
+      <tr><td><code>disable-model-invocation</code></td><td></td><td>true = 只允许用户手动触发</td></tr>
+      <tr><td><code>user-invocable</code></td><td></td><td>false = 只允许 Claude 触发</td></tr>
+      <tr><td><code>argument-hint</code></td><td></td><td>/ 命令参数补全提示</td></tr>
+      <tr><td><code>model</code></td><td></td><td>覆盖使用的模型</td></tr>
+      <tr><td><code>context: fork</code></td><td></td><td>在 subagent 隔离上下文运行</td></tr>
+      <tr><td><code>agent</code></td><td></td><td>context: fork 时指定 agent 类型</td></tr>
+      <tr><td><code>hooks</code></td><td></td><td>生命周期钩子</td></tr>
+    </tbody>
+  </table>
+  <p style="color: var(--muted); font-size: 0.88rem;">description + when_to_use 合计 ≤ 1536 字符。name 长度 ≤ 64 字符。</p>
+</section>
+
+<section class="example">
+  <h2>三层加载机制</h2>
+  <div class="grid-2">
+    <div>
+      <h3 style="color: var(--accent-2);">L1 · 元数据层</h3>
+      <p>启动时注入：所有 Skill 的 <code>name + description</code></p>
+      <p style="color: var(--muted); font-size: 0.9rem;">~100 词 / Skill，常驻</p>
+    </div>
+    <div>
+      <h3 style="color: var(--accent-2);">L2 · 主体层</h3>
+      <p>匹配触发时加载：<code>SKILL.md</code> 完整 Markdown</p>
+      <p style="color: var(--muted); font-size: 0.9rem;">建议 &lt; 500 行</p>
+    </div>
+    <div>
+      <h3 style="color: var(--accent-2);">L3+ · 资源层</h3>
+      <p>按需读取：<code>scripts/</code>、<code>references/</code>、<code>assets/</code></p>
+      <p style="color: var(--muted); font-size: 0.9rem;">无大小限制</p>
+    </div>
+    <div>
+      <h3 style="color: var(--accent-2);">结果</h3>
+      <p>装 100 个 Skill，常驻上下文也只占 1 万词左右</p>
+      <p style="color: var(--muted); font-size: 0.9rem;">按需展开，token 经济</p>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <p>learn-skills · 2026-06 · 基于 Anthropic 官方文档整理（docs.claude.com、anthropic.com/engineering）</p>
+  <p>Skill 机制仍在演进，请以 <a href="https://docs.claude.com/en/docs/agents-and-tools/agent-skills/overview">官方文档</a> 为准</p>
+</footer>
+
+</div>
+</body>
+</html>
